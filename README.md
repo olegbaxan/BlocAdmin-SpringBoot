@@ -1,3 +1,0 @@
-# BlocAdmin-SpringBoot
-
-#Test login
