@@ -45,7 +45,7 @@ public class AddressController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteAddress(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> deleteAddress(@PathVariable("id") Integer id) throws AddressNotFoundException {
         addressService.deleteAddress(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

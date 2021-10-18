@@ -38,7 +38,8 @@ public class AddressService {
                 .orElseThrow(() -> new AddressNotFoundException( id));
     }
 
-    public void deleteAddress(Integer id){
-        addressRepository.deleteById(id);
+    public void deleteAddress(Integer id) throws AddressNotFoundException {
+        final Address address = this.addressRepository.findById(id).orElseThrow(() -> new AddressNotFoundException(id));
+        addressRepository.delete(address);
     }
 }
