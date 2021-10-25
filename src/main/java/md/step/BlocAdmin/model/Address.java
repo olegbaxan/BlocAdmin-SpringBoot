@@ -78,4 +78,5 @@ public class Address implements Serializable {
                 ", houseNumber='" + houseNumber + '\'' +
                 '}';
     }
+
 }
