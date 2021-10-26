@@ -38,25 +38,26 @@ public class AddressController {
 //        return new ResponseEntity<>(address, HttpStatus.OK);
 //    }
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllAddresses(
-            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String title,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size
     ) {
         try {
             List<Address> addresses = new ArrayList<Address>();
             Pageable paging = PageRequest.of(page, size);
+//            Pageable paging = Pageable.unpaged();
             System.out.println("paging = "+paging);
 
             Page<Address> pageAddresses;
-            if (search == null) {
-                System.out.println();
+            if (title == null) {
                 pageAddresses = addressRepository.findAll(paging);
                 System.out.println("pageAddress = "+pageAddresses);
-            } else
-                pageAddresses = addressRepository.findAll(paging);
-//            public List<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(@PathVariable("search") String search)
+            } else {
+                pageAddresses = addressRepository.findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(title, title, title, title, paging);
+                System.out.println("pageAddress2 = " + pageAddresses);
+            }
 
             addresses = pageAddresses.getContent();
             System.out.println("address = "+addresses);
@@ -72,8 +73,6 @@ public class AddressController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
     @GetMapping("/{id}")
     public ResponseEntity<Address> getAddressById (@PathVariable("id") Integer id) throws AddressNotFoundException {
         Address address = addressService.findAddressById(id);

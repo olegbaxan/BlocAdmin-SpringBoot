@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {
 
-//    List<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber);
-//    Page<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber);
+//    List<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber, Pageable pageable);
+    Page<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber, Pageable pageable);
 
 //    Page<Address> findAll(Pageable pageable);
 //    Page<Address> findByCity(String city, Pageable pageable);

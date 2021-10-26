@@ -29,7 +29,7 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public List<Address> findAllAddresses() {
+    public List<Address> findAll() {
         return addressRepository.findAll();
     }
 
