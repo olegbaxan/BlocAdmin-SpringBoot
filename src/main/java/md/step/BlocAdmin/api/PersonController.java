@@ -79,13 +79,9 @@ public class PersonController {
 
     @PostMapping()
     public ResponseEntity<Person> addPerson(@RequestBody Person person) {
-//        Role personRole=personService.getRolesByPersonId(person.getPersonid());
-//        Person newPerson = personService.addPerson(person);
-//        return new ResponseEntity<>(newPerson, HttpStatus.CREATED);
-
         Set<Role> strRoles = person.getRoles();
         Set<Role> roles = new HashSet<>();
-        System.out.println("Roles = "+roles);
+        System.out.println("Roles = "+strRoles);
         if (strRoles == null) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -93,14 +89,14 @@ public class PersonController {
             roles.add(personRole);
         } else {
             strRoles.forEach(role -> {
-                switch (role.toString()) {
-                    case "admin":
+                switch (role.getName()) {
+                    case ROLE_ADMIN:
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
 
                         break;
-                    case "mod":
+                    case ROLE_BLOCADMIN:
                         Role modRole = roleRepository.findByName(ERole.ROLE_BLOCADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
@@ -134,7 +130,6 @@ public class PersonController {
         } else {
 
             strRoles.forEach(role -> {
-                System.out.println("else Role = "+role.getName());
                 switch (role.getName()) {
                     case ROLE_ADMIN:
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)

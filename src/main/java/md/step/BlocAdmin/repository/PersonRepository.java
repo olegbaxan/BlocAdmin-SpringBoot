@@ -21,4 +21,5 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 //@Query()
     Page<Person> findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(String name, String surname, String idnp, String email,String phone,String mobile, Pageable pageable);
 
+    Person findAllByPersonid(Integer id);
 }

@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -96,36 +95,4 @@ public class AddressController {
         addressService.deleteAddress(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-//    @GetMapping("/search/{search}")
-//    public List<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(@PathVariable("search") String search) {
-//        final Address address=new Address();
-//        address.setCity(search);
-//        address.setRaion(search);
-//        address.setStreet(search);
-//        address.setHouseNumber(search);
-//        return addressService.getFilteredData(address);
-//    }
-    ///api/v1/address?page=1&size=3
-//    @GetMapping("/page/{pageNo}/of/{pageSize}")
-//    public String findPaginated(@PathVariable (value = "page") int pageNo,
-//                                @PathVariable (value = "size") int pageSize,
-//                                @RequestParam("sortField") String sortField,
-//                                @RequestParam("sortDir") String sortDir,
-//                                Model model) {
-////        int pageSize = 5;
-//
-//        Page<Address> page = addressService.findPaginated(pageNo, pageSize, sortField, sortDir);
-//        List<Address> listEmployees = page.getContent();
-//
-//        model.addAttribute("currentPage", pageNo);
-//        model.addAttribute("totalPages", page.getTotalPages());
-//        model.addAttribute("totalItems", page.getTotalElements());
-//
-//        model.addAttribute("sortField", sortField);
-//        model.addAttribute("sortDir", sortDir);
-//        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-//
-//        model.addAttribute("listEmployees", listEmployees);
-//        return "index";
-//    }
 }

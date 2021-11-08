@@ -13,7 +13,7 @@ import java.util.Set;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email"),
-//                @UniqueConstraint(columnNames = "idnp")
+                @UniqueConstraint(columnNames = "idnp")
         })
 public class Person {
     @Id
@@ -39,11 +39,11 @@ public class Person {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-//    @NotBlank
+    @NotBlank
     @Size(max=30)
     private String name;
 
-//    @NotBlank
+    @NotBlank
     @Size(max=30)
     private String surname;
 
