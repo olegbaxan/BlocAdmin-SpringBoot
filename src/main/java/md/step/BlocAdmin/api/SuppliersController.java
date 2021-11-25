@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,7 +37,7 @@ public class SuppliersController {
         this.suppliersService = suppliersService;
         this.addressService=addressService;
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllSuppliers(
             @RequestParam(required = false) String title,
@@ -69,17 +70,19 @@ public class SuppliersController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("address")
     public ResponseEntity<List<Address>> getAddress() {
         List<Address> address = suppliersService.findAllAddresses();
         return ResponseEntity.ok(address);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Suppliers> getSupplierById(@PathVariable("id") Integer id) throws SuppliersNotFoundException {
         Suppliers supplier = suppliersService.findSupplierById(id);
         return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Suppliers> addSuppliers(@RequestBody Suppliers supplier) {
         Address address = new Address();
@@ -91,7 +94,7 @@ public class SuppliersController {
 
         return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Suppliers> updateSupplier(@RequestBody Suppliers supplier) {
         Address address = new Address();
@@ -101,7 +104,7 @@ public class SuppliersController {
         Suppliers updateSupplier = suppliersService.updateSupplier(supplier);
         return new ResponseEntity<>(updateSupplier, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSupplier(@PathVariable("id") Integer id) throws SuppliersNotFoundException {
         suppliersService.deleteSupplier(id);

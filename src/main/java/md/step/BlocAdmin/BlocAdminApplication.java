@@ -1,16 +1,16 @@
 package md.step.BlocAdmin;
 
-import md.step.BlocAdmin.model.*;
-import md.step.BlocAdmin.repository.*;
+import md.step.BlocAdmin.service.InitialisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 @SpringBootApplication
 public class BlocAdminApplication {
@@ -23,105 +23,38 @@ public class BlocAdminApplication {
 	class DemoCommandLineRunner implements CommandLineRunner {
 
 		@Autowired
-		private RoleRepository roleRepository;
+		private InitialisationService initialisationService;
 
 		@Autowired
-		private StatusRepository statusRepository;
-		@Autowired
-		private MeterTypeRepository meterTypeRepository;
-		@Autowired
-		private TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository;
-
-		@Autowired
-		private PersonRepository personRepository;
-
-		@Autowired
-		PasswordEncoder encoder;
+		private JavaMailSender javaMailSender;
 
 		@Override
-		public void run(String... args) throws Exception {
+		public void run(String... args) throws Exception, MessagingException, IOException {
+		//Setup DB initial data:Admin,Role,types,destinations,
+		initialisationService.initializeAttribute();
+			//Mail config
+//			EmailService.sendMail("oleg.baxan@gmail.com", "Hi", "Ho ho ho");
+//			EmailService.sendPreConfiguredMail("Ho ho ho");
+//			System.out.println("Sending Email...");
 
-			Role roleAdmin = new Role();
-			roleAdmin.setId(1);
-			roleAdmin.setName(ERole.ROLE_ADMIN);
-			roleRepository.save(roleAdmin);
+//			sendEmail();
+			//sendEmailWithAttachment();
 
-			Role roleBlocAdmin = new Role();
-			roleBlocAdmin.setId(2);
-			roleBlocAdmin.setName(ERole.ROLE_BLOCADMIN);
-			roleRepository.save(roleBlocAdmin);
-			
-			Role roleUser = new Role();
-			roleUser.setId(3);
-			roleUser.setName(ERole.ROLE_USER);
-			roleRepository.save(roleUser);
-
-			Status statusNew = new Status();
-			statusNew.setId(1);
-			statusNew.setName(EStatus.STATUS_NEW);
-			statusRepository.save(statusNew);
-			Status statusPayed = new Status();
-			statusPayed.setId(2);
-			statusPayed.setName(EStatus.STATUS_PAYED);
-			statusRepository.save(statusPayed);
-			Status statusClosed = new Status();
-			statusClosed.setId(3);
-			statusClosed.setName(EStatus.STATUS_CLOSED);
-			statusRepository.save(statusClosed);
-			Status statusSendInvoice = new Status();
-			statusSendInvoice.setId(3);
-			statusSendInvoice.setName(EStatus.STATUS_SENDINVOICE);
-			statusRepository.save(statusSendInvoice);
-			MeterType typeWater = new MeterType();
-			typeWater.setId(1);
-			typeWater.setName(EMeterType.DEST_WATER);
-			meterTypeRepository.save(typeWater);
-			MeterType typeGas = new MeterType();
-			typeGas.setId(2);
-			typeGas.setName(EMeterType.DEST_GAS);
-			meterTypeRepository.save(typeGas);
-			MeterType typeElectricity = new MeterType();
-			typeElectricity.setId(3);
-			typeElectricity.setName(EMeterType.DEST_ELECTRICITY);
-			meterTypeRepository.save(typeElectricity);
-			MeterType typeGarbage = new MeterType();
-			typeGarbage.setId(4);
-			typeGarbage.setName(EMeterType.DEST_GARBAGE);
-			meterTypeRepository.save(typeGarbage);
-			MeterType typeClean = new MeterType();
-			typeClean.setId(5);
-			typeClean.setName(EMeterType.DEST_CLEAN);
-			meterTypeRepository.save(typeClean);
-
-			TypeOfMeterAndInvoice typeOFBuilding = new TypeOfMeterAndInvoice();
-			typeOFBuilding.setId(1);
-			typeOFBuilding.setName(ETypeOfMeterAndInvoice.TYPE_BUILDING);
-			typeOfMeterAndInvoiceRepository.save(typeOFBuilding);
-			TypeOfMeterAndInvoice typeOFLadder = new TypeOfMeterAndInvoice();
-			typeOFLadder.setId(2);
-			typeOFLadder.setName(ETypeOfMeterAndInvoice.TYPE_LADDER);
-			typeOfMeterAndInvoiceRepository.save(typeOFLadder);
-			TypeOfMeterAndInvoice typeOFFlats = new TypeOfMeterAndInvoice();
-			typeOFFlats.setId(3);
-			typeOFFlats.setName(ETypeOfMeterAndInvoice.TYPE_FLATS);
-			typeOfMeterAndInvoiceRepository.save(typeOFFlats);
+//			System.out.println("Done");
 
 
-			Person admin=new Person();
-			Set<Role> roles = new HashSet<>();
-			admin.setUsername("oleg");
-			admin.setEmail("oleg@mail.md");
-			admin.setPassword(encoder.encode("oleg12"));
-			admin.setName("oleg");
-			admin.setSurname("oleg");
-			admin.setIdnp("1234567890123");
-			admin.setMobile("067777777");
-			admin.setDescription("Some text description");
-			Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(adminRole);
-			admin.setRoles(roles);
 
-			personRepository.save(admin);
+
+		}
+		void sendEmail() {
+
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setTo("oleg.baxan@gmail.com");
+
+			msg.setSubject("Testing from Spring Boot");
+			msg.setText("Hello World \n Spring Boot Email");
+
+			javaMailSender.send(msg);
 
 		}
 	}

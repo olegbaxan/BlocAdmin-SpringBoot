@@ -3,8 +3,8 @@ package md.step.BlocAdmin.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "typeofmeterandinvoice")
-public class TypeOfMeterAndInvoice {
+@Table(name = "typeofmeterinvoice")
+public class TypeOfMeterInvoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,12 +12,12 @@ public class TypeOfMeterAndInvoice {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private ETypeOfMeterAndInvoice name;
+    private ETypeOfMeterInvoice name;
 
-    public TypeOfMeterAndInvoice() {
+    public TypeOfMeterInvoice() {
     }
 
-    public TypeOfMeterAndInvoice(Integer id, ETypeOfMeterAndInvoice name) {
+    public TypeOfMeterInvoice(Integer id, ETypeOfMeterInvoice name) {
         this.id = id;
         this.name = name;
     }
@@ -30,11 +30,11 @@ public class TypeOfMeterAndInvoice {
         this.id = id;
     }
 
-    public ETypeOfMeterAndInvoice getName() {
+    public ETypeOfMeterInvoice getName() {
         return name;
     }
 
-    public void setName(ETypeOfMeterAndInvoice name) {
+    public void setName(ETypeOfMeterInvoice name) {
         this.name = name;
     }
 

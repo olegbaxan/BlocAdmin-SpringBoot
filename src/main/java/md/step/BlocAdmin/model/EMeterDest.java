@@ -1,6 +1,6 @@
 package md.step.BlocAdmin.model;
 
-public enum EMeterType {
+public enum EMeterDest {
     DEST_WATER,
     DEST_GAS,
     DEST_ELECTRICITY,

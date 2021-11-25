@@ -39,6 +39,7 @@ public class Person {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+
     @NotBlank
     @Size(max=30)
     private String name;
@@ -62,6 +63,9 @@ public class Person {
     @Size(min = 13,max=13)
     private String idnp;
 
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
     public Person() {
     }
 
@@ -77,12 +81,20 @@ public class Person {
         this.regDate= LocalDate.now();
     }
 
-    public Integer getPersonid() {
-        return personid;
+    public void setPersonid(Integer personid) {
+        this.personid = personid;
     }
 
-    public void setPersonId(Integer personId) {
-        this.personid = personid;
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public Integer getPersonid() {
+        return personid;
     }
 
     public String getUsername() {

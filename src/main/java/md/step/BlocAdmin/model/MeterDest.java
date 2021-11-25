@@ -3,22 +3,22 @@ package md.step.BlocAdmin.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "meter_dest")
+@Table(name = "meter_type")
 
-public class MeterType {
+public class MeterDest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer metertypeid;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private EMeterType name;
+    private EMeterDest name;
 
-    public MeterType() {
+    public MeterDest() {
 
     }
 
-    public MeterType(EMeterType name) {
+    public MeterDest(EMeterDest name) {
         this.name = name;
     }
 
@@ -30,11 +30,11 @@ public class MeterType {
         this.metertypeid = id;
     }
 
-    public EMeterType getName() {
+    public EMeterDest getName() {
         return name;
     }
 
-    public void setName(EMeterType name) {
+    public void setName(EMeterDest name) {
         this.name = name;
     }
 

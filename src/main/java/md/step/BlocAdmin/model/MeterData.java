@@ -18,12 +18,13 @@ public class MeterData {
     private Meters meter;
 
     private Double previousValue;
-    @NotBlank
+
     private Double currentValue;
 
     private Double meterValue;
 
-    @NotBlank
+    private Double meterSum;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(	name = "meterdata_status",
             joinColumns = @JoinColumn(name = "meterdata_id"),
@@ -33,13 +34,22 @@ public class MeterData {
     public MeterData() {
     }
 
-    public MeterData(Integer meterdataid, Meters meter, Double previousValue, Double currentValue, Double meterValue, Status status) {
+    public MeterData(Integer meterdataid, Meters meter, Double previousValue, Double currentValue, Double meterValue, Double meterSum, Status status) {
         this.meterdataid = meterdataid;
         this.meter = meter;
         this.previousValue = previousValue;
         this.currentValue = currentValue;
         this.meterValue = meterValue;
+        this.meterSum = meterSum;
         this.status = status;
+    }
+
+    public Double getMeterSum() {
+        return meterSum;
+    }
+
+    public void setMeterSum(Double meterSum) {
+        this.meterSum = meterSum;
     }
 
     public Integer getMeterdataid() {
@@ -98,6 +108,7 @@ public class MeterData {
                 ", previousValue=" + previousValue +
                 ", currentValue=" + currentValue +
                 ", meterValue=" + meterValue +
+                ", meterSum=" + meterSum +
                 ", status=" + status +
                 '}';
     }

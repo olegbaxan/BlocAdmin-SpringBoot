@@ -18,21 +18,26 @@ import java.util.Optional;
 @Transactional
 public class MetersService {
     private MetersRepository metersRepository;
-    private MeterTypeRepository meterTypeRepository;
+    private MeterDestRepository meterDestRepository;
     private SuppliersRepository suppliersRepository;
     private PersonRepository personRepository;
     private FlatsRepository flatsRepository;
-    private TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository;
+    private BuildingsRepository buildingsRepository;
+    private InvoicesRepository invoicesRepository;
+    private TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository;
 
     @Autowired
-    public MetersService(MetersRepository metersRepository, MeterTypeRepository meterTypeRepository, SuppliersRepository suppliersRepository, FlatsRepository flatsRepository,
-                         TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository,PersonRepository personRepository) {
+    public MetersService(MetersRepository metersRepository, MeterDestRepository meterDestRepository, SuppliersRepository suppliersRepository, FlatsRepository flatsRepository,
+                         TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository, PersonRepository personRepository,
+                         InvoicesRepository invoicesRepository, BuildingsRepository buildingsRepository) {
         this.metersRepository = metersRepository;
-        this.meterTypeRepository = meterTypeRepository;
+        this.meterDestRepository = meterDestRepository;
         this.suppliersRepository = suppliersRepository;
         this.personRepository = personRepository;
         this.flatsRepository = flatsRepository;
-        this.typeOfMeterAndInvoiceRepository = typeOfMeterAndInvoiceRepository;
+        this.invoicesRepository = invoicesRepository;
+        this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
+        this.buildingsRepository = buildingsRepository;
     }
 
     public Meters addMeter(Meters meter) {
@@ -43,19 +48,28 @@ public class MetersService {
         return metersRepository.findAll();
     }
 
-    public List<MeterType> findAllMeterType() {
-        return meterTypeRepository.findAll();
+    public List<MeterDest> findAllMeterType() {
+        return meterDestRepository.findAll();
     }
-    public List<TypeOfMeterAndInvoice> findAllTyepOfMeterAndInvoice() {
-        return typeOfMeterAndInvoiceRepository.findAll();
+
+    public List<TypeOfMeterInvoice> findAllTypeOfMeterInvoice() {
+        return typeOfMeterInvoiceRepository.findAll();
     }
 
     public List<Suppliers> findAllSuppliers() {
         return suppliersRepository.findAll();
     }
-    public List<Person> findAllPerson() {return personRepository.findAll();}
+
+    public List<Person> findAllPerson() {
+        return personRepository.findAll();
+    }
+
     public List<Flats> findAllFlats() {
         return flatsRepository.findAll();
+    }
+
+    public List<Buildings> findAllBuildings() {
+        return buildingsRepository.findAll();
     }
 
 
@@ -63,23 +77,34 @@ public class MetersService {
         Optional<Meters> meter = metersRepository.findById(id);
         return meter.get().getSupplier();
     }
+
     public Person getPersonsByMeterId(Integer id) {
         Optional<Meters> meter = metersRepository.findById(id);
         return meter.get().getPerson();
     }
 
-    public MeterType getMeterDestByMeterId(Integer id) {
-        Optional<Meters> meter= metersRepository.findById(id);
-        return meter.get().getMeterType();
+    public Buildings getBuildingByMeterId(Integer id) {
+        Optional<Meters> meter = metersRepository.findById(id);
+        return meter.get().getBuilding();
     }
-    public TypeOfMeterAndInvoice getTypeOfMeterAndInvoiceByMeterId(Integer id) {
-        Optional<Meters> meter= metersRepository.findById(id);
-        return meter.get().getTypeOfMeterAndInvoice();
+
+    public MeterDest getMeterDestByMeterId(Integer id) {
+        Optional<Meters> meter = metersRepository.findById(id);
+        return meter.get().getMeterDest();
+    }
+
+    public TypeOfMeterInvoice getTypeOfMeterInvoiceByMeterId(Integer id) {
+        Optional<Meters> meter = metersRepository.findById(id);
+        return meter.get().getTypeOfMeterInvoice();
     }
 
     public Flats getFlatByMetersId(Integer id) {
         Optional<Meters> meters = metersRepository.findById(id);
         return meters.get().getFlat();
+    }
+    public List<Flats> getFlatByBuilding(Buildings building) {
+        List<Flats> flats = flatsRepository.findFlatsByBuilding(building);
+        return flats;
     }
 
 
@@ -107,3 +132,4 @@ public class MetersService {
     }
 
 }
+

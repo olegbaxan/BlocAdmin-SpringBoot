@@ -16,16 +16,26 @@ public class Address implements Serializable {
     private String street;
     @Column(length = 10)
     private String houseNumber;
+    private Integer entranceNo;
 
     public Address() {
     }
 
-    public Address(Integer addressid, String city, String raion, String street, String houseNumber) {
+    public Address(Integer addressid, String city, String raion, String street, String houseNumber, Integer entranceNo) {
         this.addressid = addressid;
         this.city = city;
         this.raion = raion;
         this.street = street;
         this.houseNumber = houseNumber;
+        this.entranceNo = entranceNo;
+    }
+
+    public Integer getEntranceNo() {
+        return entranceNo;
+    }
+
+    public void setEntranceNo(Integer entranceNo) {
+        this.entranceNo = entranceNo;
     }
 
     public Integer getAddressid() {
@@ -76,9 +86,11 @@ public class Address implements Serializable {
                 ", raion='" + raion + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
+                ", entranceNo=" + entranceNo +
                 '}';
     }
-//    public String toString() {
+
+    //    public String toString() {
 //        return "Tutorial [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + published + "]";
 //    }
 

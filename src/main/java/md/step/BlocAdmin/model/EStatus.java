@@ -5,5 +5,5 @@ public enum EStatus {
     STATUS_NEW,
     STATUS_PAYED,
     STATUS_CLOSED,
-    STATUS_SENDINVOICE;
+    STATUS_SENDINVOICE,
 }

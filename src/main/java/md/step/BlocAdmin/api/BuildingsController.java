@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class BuildingsController {
         this.buidingsService = buidingsService;
         this.addressService=addressService;
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllBuildings(
             @RequestParam(required = false) String title,
@@ -70,17 +71,20 @@ public class BuildingsController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("address")
     public ResponseEntity<List<Address>> getAddress() {
         List<Address> address = buidingsService.findAllAddresses();
         return ResponseEntity.ok(address);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Buildings> getBuildingById(@PathVariable("id") Integer id) throws BuildingsNotFoundException {
         Buildings building = buidingsService.findBuildingById(id);
+        System.out.println("Address = "+building.getAddress());
         return new ResponseEntity<>(building, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Buildings> addBuilding(@RequestBody Buildings building) {
         Address address = new Address();
@@ -91,13 +95,13 @@ public class BuildingsController {
 
         return new ResponseEntity<>(building, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Buildings> updateBuilding(@RequestBody Buildings building) {
         Buildings updateBuilding = buidingsService.updateBuilding(building);
         return new ResponseEntity<>(updateBuilding, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBuilding(@PathVariable("id") Integer id) throws BuildingsNotFoundException {
         buidingsService.deleteBuilding(id);

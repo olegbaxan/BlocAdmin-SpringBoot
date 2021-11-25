@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,27 +31,31 @@ public final FlatsService flatsService;
     @Autowired
     private MetersRepository metersRepository;
     @Autowired
-    private MeterTypeRepository meterTypeRepository;
+    private MeterDestRepository meterDestRepository;
     @Autowired
-    private TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository;
+    private TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository;
     @Autowired
     private SuppliersRepository suppliersRepository;
     @Autowired
     private FlatsRepository flatsRepository;
+    @Autowired
+    private BuildingsRepository buildingsRepository;
 
     @Autowired
     private PersonRepository personRepository;
 
     @Autowired
 
-    public MetersController(MetersService metersService, SuppliersService suppliersService, FlatsService flatsService, MeterTypeRepository meterTypeRepository,
-                            TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository) {
+    public MetersController(MetersService metersService, SuppliersService suppliersService, FlatsService flatsService, MeterDestRepository meterDestRepository,
+                            TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository,BuildingsRepository buildingsRepository) {
         this.metersService = metersService;
         this.suppliersService = suppliersService;
         this.flatsService = flatsService;
-        this.meterTypeRepository = meterTypeRepository;
-        this.typeOfMeterAndInvoiceRepository = typeOfMeterAndInvoiceRepository;
+        this.meterDestRepository = meterDestRepository;
+        this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
+        this.buildingsRepository=buildingsRepository;
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllMeters(
             @RequestParam(required = false) String title,
@@ -82,29 +87,71 @@ public final FlatsService flatsService;
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("supplier")
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("fm")
+    public ResponseEntity<List<Meters>> getAllFilteredMeters(
+            @RequestParam(required = false) String supp,
+            @RequestParam(required = false) Integer ladd,
+            @RequestParam(required = false) Integer build
+    ) {
+        System.out.println("Supp="+supp);
+        System.out.println("ladd="+ladd);
+        System.out.println("build="+build);
+        try {
+            List<Meters> meters = new ArrayList<Meters>();
+
+            if (ladd == null) {
+                meters = metersRepository.findAllBySupplier_SupplierNameAndFlat_Building_Buildingid(supp,build);
+            } else {
+                meters = metersRepository.findAllBySupplier_SupplierNameAndFlat_Building_BuildingidAndAndFlat_Entrance(supp,ladd,build);
+            }
+
+            return new ResponseEntity<>(meters, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("suppliers")
     public ResponseEntity<List<Suppliers>> getSuppliers() {
         List<Suppliers> suppliers = metersService.findAllSuppliers();
         return ResponseEntity.ok(suppliers);
     }
-    @GetMapping("person")
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = metersService.findAllPerson();
         return ResponseEntity.ok(persons);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("buildingflats/{id}")
+    public ResponseEntity<List<Flats>> getBuildingFlats(@PathVariable("id") Integer id) {
+        Buildings buildings = buildingsRepository.findAllByBuildingid(id);
+        List<Flats> flats = metersService.getFlatByBuilding(buildings);
+        return ResponseEntity.ok(flats);
+    }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("flats")
     public ResponseEntity<List<Flats>> getFlats() {
         List<Flats> flats = metersService.findAllFlats();
         return ResponseEntity.ok(flats);
     }
-    @GetMapping("metertype")
-    public ResponseEntity<List<MeterType>> getMeterDest() {
-        List<MeterType> meterType = metersService.findAllMeterType();
-        return ResponseEntity.ok(meterType);
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("buildings")
+    public ResponseEntity<List<Buildings>> getBuildings() {
+        List<Buildings> buildings = metersService.findAllBuildings();
+        return ResponseEntity.ok(buildings);
     }
-    @GetMapping("typeofmeterandinvoice")
-    public ResponseEntity<List<TypeOfMeterAndInvoice>> getTypeMeterAndInvoice() {
-        List<TypeOfMeterAndInvoice> typeOfMeterAndInvoices = metersService.findAllTyepOfMeterAndInvoice();
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("metertype")
+    public ResponseEntity<List<MeterDest>> getMeterDest() {
+        List<MeterDest> meterDest = metersService.findAllMeterType();
+        return ResponseEntity.ok(meterDest);
+    }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("typeofmeterinvoice")
+    public ResponseEntity<List<TypeOfMeterInvoice>> getTypeMeterAndInvoice() {
+        List<TypeOfMeterInvoice> typeOfMeterAndInvoices = metersService.findAllTypeOfMeterInvoice();
         return ResponseEntity.ok(typeOfMeterAndInvoices);
     }
     @GetMapping("/{id}")
@@ -112,51 +159,70 @@ public final FlatsService flatsService;
         Meters meter = metersService.findMeterById(id);
         return new ResponseEntity<>(meter, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Meters> addMeter(@RequestBody Meters meter) {
-        Suppliers supplier = new Suppliers();
-        supplier=suppliersRepository.findAllBySupplierid(meter.getSupplier().getSupplierId());
+        Suppliers supplier =suppliersRepository.findAllBySupplierid(meter.getSupplier().getSupplierId());
         meter.setSupplier(supplier);
 
-        Person person = new Person();
-        person=personRepository.findAllByPersonid(meter.getPerson().getPersonid());
-        meter.setPerson(person);
 
-        Flats flat = new Flats();
-        flat=flatsRepository.findAllByFlatid(meter.getFlat().getFlatid());
-        meter.setFlat(flat);
+        if(meter.getPerson()!=null) {
+            Person person = personRepository.findAllByPersonid(meter.getPerson().getPersonid());
+            meter.setPerson(person);
+        }
 
-        MeterType meterDestination = new MeterType();
-        meterDestination= meterTypeRepository.findAllByMetertypeid(meter.getMeterType().getId());
-        meter.setMeterType(meterDestination);
+        if(meter.getFlat()!=null) {
+            Flats flat = flatsRepository.findAllByFlatid(meter.getFlat().getFlatid());
+            meter.setFlat(flat);
+        }
 
-        TypeOfMeterAndInvoice typeOfMeterAndInvoice = new TypeOfMeterAndInvoice();
-        typeOfMeterAndInvoice= typeOfMeterAndInvoiceRepository.findAllById(meter.getTypeOfMeterAndInvoice().getId());
-        meter.setTypeOfMeterAndInvoice(typeOfMeterAndInvoice);
+        if(meter.getBuilding()!=null) {
+            Buildings building = buildingsRepository.findAllByBuildingid(meter.getBuilding().getBuildingid());
+            meter.setBuilding(building);
+        }
 
+
+        MeterDest meterDestination= meterDestRepository.findAllByMetertypeid(meter.getMeterDest().getId());
+        meter.setMeterDest(meterDestination);
+
+        TypeOfMeterInvoice typeOfMeterInvoice = typeOfMeterInvoiceRepository.findAllById(meter.getTypeOfMeterInvoice().getId());
+        meter.setTypeOfMeterInvoice(typeOfMeterInvoice);
+
+        System.out.println("Meters = "+meter.getSerial());
         metersService.addMeter(meter);
 
         return new ResponseEntity<>(meter, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Meters> updateMeter(@RequestBody Meters meter) {
-        Suppliers supplier = new Suppliers();
+        Suppliers supplier;
         supplier=suppliersRepository.findAllBySupplierid(meter.getSupplier().getSupplierId());
         meter.setSupplier(supplier);
 
-        Flats flat = new Flats();
-        flat=flatsRepository.findAllByFlatid(meter.getFlat().getFlatid());
-        meter.setFlat(flat);
-        MeterType meterDestination = new MeterType();
-        meterDestination= meterTypeRepository.findAllByMetertypeid(meter.getMeterType().getId());
-        meter.setFlat(flat);
+        if(meter.getPerson()!=null) {
+            Person person= personRepository.findAllByPersonid(meter.getPerson().getPersonid());
+            meter.setPerson(person);
+        }
+
+        if(meter.getFlat()!=null) {
+            Flats flat= flatsRepository.findAllByFlatid(meter.getFlat().getFlatid());
+            meter.setFlat(flat);
+        }
+        if(meter.getBuilding()!=null) {
+            Buildings building = buildingsRepository.findAllByBuildingid(meter.getBuilding().getBuildingid());
+            meter.setBuilding(building);
+        }
+
+
+        MeterDest meterDestination = new MeterDest();
+        meterDestination= meterDestRepository.findAllByMetertypeid(meter.getMeterDest().getId());
+        meter.setMeterDest(meterDestination);
 
         Meters updateMeter = metersService.updateMeter(meter);
         return new ResponseEntity<>(updateMeter, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMeter(@PathVariable("id") Integer id) throws MetersNotFoundException {
         metersService.deleteMeter(id);

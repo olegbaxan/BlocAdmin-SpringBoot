@@ -49,7 +49,7 @@ public class Suppliers {
 
 
 
-    private EMeterType meterDestination;
+    private EMeterDest meterDestination;
 
     public Suppliers() {
     }
@@ -120,11 +120,11 @@ public class Suppliers {
         this.address = address;
     }
 
-    public EMeterType getMeterDestination() {
+    public EMeterDest getMeterDestination() {
         return meterDestination;
     }
 
-    public void setMeterDestination(EMeterType meterDestination) {
+    public void setMeterDestination(EMeterDest meterDestination) {
         this.meterDestination = meterDestination;
     }
 

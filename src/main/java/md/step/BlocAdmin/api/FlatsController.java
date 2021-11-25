@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class FlatsController {
         this.personService = personService;
         this.metersService = metersService;
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllFLats(
             @RequestParam(required = false) String title,
@@ -80,27 +81,31 @@ public class FlatsController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("buildings")
     public ResponseEntity<List<Buildings>> getBuildings() {
         List<Buildings> buildings = flatsService.findAllBuildings();
         return ResponseEntity.ok(buildings);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = flatsService.findAllPerson();
         return ResponseEntity.ok(persons);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("meters")
     public ResponseEntity<List<Meters>> getMeters() {
         List<Meters> meters = flatsService.findAllMeters();
         return ResponseEntity.ok(meters);
     }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Flats> getFlatById(@PathVariable("id") Integer id) throws FlatsNotFoundException {
         Flats flat = flatsService.findFlatById(id);
         return new ResponseEntity<>(flat, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Flats> addFlat(@RequestBody Flats flat) {
         Buildings building = new Buildings();
@@ -130,7 +135,7 @@ public class FlatsController {
 
         return new ResponseEntity<>(flat, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Flats> updateFlat(@RequestBody Flats flat) {
         Buildings building = new Buildings();
@@ -146,8 +151,8 @@ public class FlatsController {
         flat.setMeters(meters);
 
         Set<Person> persons = new HashSet<>();
-        Set<Person> personId = flat.getPerson();
-        personId.forEach(person -> {
+        Set<Person> flatPerson = flat.getPerson();
+        flatPerson.forEach(person -> {
             Person personToAdd = personRepository.findAllByPersonid(person.getPersonid());
             persons.add(personToAdd);
         });
@@ -155,7 +160,7 @@ public class FlatsController {
         Flats updateFlat = flatsService.updateFlat(flat);
         return new ResponseEntity<>(updateFlat, HttpStatus.OK);
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFlat(@PathVariable("id") Integer id) throws FlatsNotFoundException {
         flatsService.deleteFlat(id);

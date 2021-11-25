@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -35,7 +36,7 @@ public class PersonController {
         this.personService = personService;
         this.roleRepository=roleRepository;
     }
-
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllPersons(
             @RequestParam(required = false) String title,
@@ -45,15 +46,19 @@ public class PersonController {
         try {
             List<Person> persons = new ArrayList<Person>();
             Pageable paging = PageRequest.of(page, size);
-
+            Optional<Role> personRole = roleRepository.findByName(ERole.ROLE_USER);
             Page<Person> pagePersons;
             if (title == null) {
-                pagePersons = personRepository.findAll(paging);
+//                Optional<Role> personRole = roleRepository.findByName(ERole.ROLE_USER);
+                pagePersons = personRepository.findAllByRoles(personRole,paging);
+//                pagePersons = personRepository.findAll(paging);
             } else {
-                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
+                pagePersons = personRepository.findAllByRolesAndNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(personRole,title, title, title, title,title,title, paging);
+//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
             }
 
             persons = pagePersons.getContent();
+            persons = persons.stream().filter(p -> p.getRoles().contains(personRole.get())).collect(Collectors.toList());
             Map<String, Object> response = new HashMap<>();
             response.put("persons", persons);
             response.put("currentPage", pagePersons.getNumber());
@@ -71,18 +76,26 @@ public class PersonController {
             List<Role> role = personService.findAllRoles();
         return ResponseEntity.ok(role);
     }
+    @GetMapping("username/{username}")
+    public Boolean checkUsername(@PathVariable("username") String username) {
+        return this.personService.checkUsernameExist(username);
+    }
+    @GetMapping("idnp/{idnp}")
+    public Boolean checkIdnp(@PathVariable("idnp") String idnp) {
+        return this.personService.checkIdnpExist(idnp);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Person> getPersonById(@PathVariable("id") Integer id) throws PersonNotFoundException {
         Person person = personService.findPersonById(id);
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
     public ResponseEntity<Person> addPerson(@RequestBody Person person) {
         Set<Role> strRoles = person.getRoles();
         Set<Role> roles = new HashSet<>();
         System.out.println("Roles = "+strRoles);
-        if (strRoles == null) {
+        if (strRoles.isEmpty()) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             System.out.println("personRole = "+personRole);
@@ -114,14 +127,10 @@ public class PersonController {
 
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
-
     @PutMapping()
     public ResponseEntity<Person> updatePerson(@RequestBody Person person) {
         Set<Role> strRoles = person.getRoles();
         Set<Role> roles = new HashSet<>();
-        strRoles.forEach(role -> {
-//            System.out.println("ROles person = "+role.getName());
-        });
         if (strRoles == null) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -151,11 +160,10 @@ public class PersonController {
             });
         }
         person.setRoles(roles);
-//        System.out.println("Roles after= "+roles);
         Person updatePerson = personService.updatePerson(person);
         return new ResponseEntity<>(updatePerson, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable("id") Integer id) throws PersonNotFoundException {
         personService.deletePerson(id);

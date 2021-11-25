@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 @Table(	name = "meters",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "serial"),
-                @UniqueConstraint(columnNames = "initialValue"),
         })
 public class Meters {
 
@@ -17,16 +16,17 @@ public class Meters {
         private Integer meterid;
 
         @OneToOne(fetch = FetchType.LAZY)
-        @JoinTable(	name = "meter_metertype",
+        @JoinTable(	name = "meter_meterdest",
                 joinColumns = @JoinColumn(name = "meter_id"),
-                inverseJoinColumns = @JoinColumn(name = "meter_type_id"))
-        private MeterType meterType = new MeterType();
+                inverseJoinColumns = @JoinColumn(name = "meter_dest_id"))
+        private MeterDest meterDest ;
 
         @OneToOne(fetch = FetchType.LAZY)
         @JoinTable(	name = "meter_typeofmeterinvoice",
                 joinColumns = @JoinColumn(name = "meter_id"),
                 inverseJoinColumns = @JoinColumn(name = "type_of_meter_invoice_id"))
-        private TypeOfMeterAndInvoice typeOfMeterAndInvoice = new TypeOfMeterAndInvoice();
+        private TypeOfMeterInvoice typeOfMeterInvoice ;
+//        = new TypeOfMeterInvoice();
 
         @Size(max = 30)
         private String serial;
@@ -34,19 +34,24 @@ public class Meters {
         private Double initialValue;
 
         @NotBlank
-        @OneToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinTable(	name = "meter_supplier",
                 joinColumns = @JoinColumn(name = "meter_id"),
                 inverseJoinColumns = @JoinColumn(name = "supplier_id"))
         private Suppliers supplier;
 
-
-
-        @OneToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinTable(	name = "meter_flat",
                 joinColumns = @JoinColumn(name = "meter_id"),
                 inverseJoinColumns = @JoinColumn(name = "flat_id"))
         private Flats flat;
+
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinTable(	name = "meter_building",
+                joinColumns = @JoinColumn(name = "meter_id"),
+                inverseJoinColumns = @JoinColumn(name = "building_id"))
+        private Buildings building;
+
 
         @NotBlank
         @OneToOne(fetch = FetchType.LAZY)
@@ -58,14 +63,15 @@ public class Meters {
         public Meters() {
         }
 
-        public Meters(Integer meterid, MeterType meterType, TypeOfMeterAndInvoice typeOfMeterAndInvoice, String serial, Double initialValue, Suppliers supplier, Flats flat, Person person) {
+        public Meters(Integer meterid, MeterDest meterDest, TypeOfMeterInvoice typeOfMeterInvoice, String serial, Double initialValue, Suppliers supplier, Flats flat, Buildings building, Person person) {
                 this.meterid = meterid;
-                this.meterType = meterType;
-                this.typeOfMeterAndInvoice = typeOfMeterAndInvoice;
+                this.meterDest = meterDest;
+                this.typeOfMeterInvoice = typeOfMeterInvoice;
                 this.serial = serial;
                 this.initialValue = initialValue;
                 this.supplier = supplier;
                 this.flat = flat;
+                this.building = building;
                 this.person = person;
         }
 
@@ -77,12 +83,12 @@ public class Meters {
                 this.meterid = meterid;
         }
 
-        public TypeOfMeterAndInvoice getTypeOfMeterAndInvoice() {
-                return typeOfMeterAndInvoice;
+        public Buildings getBuilding() {
+                return building;
         }
 
-        public void setTypeOfMeterAndInvoice(TypeOfMeterAndInvoice typeOfMeterAndInvoice) {
-                this.typeOfMeterAndInvoice = typeOfMeterAndInvoice;
+        public void setBuilding(Buildings building) {
+                this.building = building;
         }
 
         public Integer getMeterId() {
@@ -93,12 +99,12 @@ public class Meters {
                 this.meterid = meterid;
         }
 
-        public MeterType getMeterType() {
-                return meterType;
+        public MeterDest getMeterDest() {
+                return meterDest;
         }
 
-        public void setMeterType(MeterType meterType) {
-                this.meterType = meterType;
+        public void setMeterDest(MeterDest meterDest) {
+                this.meterDest = meterDest;
         }
 
         public String getSerial() {
@@ -115,6 +121,13 @@ public class Meters {
 
         public void setInitialValue(Double initialValue) {
                 this.initialValue = initialValue;
+        }
+
+        public void setTypeOfMeterInvoice(TypeOfMeterInvoice typeOfMeterInvoice) {
+                this.typeOfMeterInvoice = typeOfMeterInvoice;
+        }
+        public TypeOfMeterInvoice getTypeOfMeterInvoice() {
+                return typeOfMeterInvoice;
         }
 
         public Suppliers getSupplier() {
@@ -145,12 +158,13 @@ public class Meters {
         public String toString() {
                 return "Meters{" +
                         "meterid=" + meterid +
-                        ", meterType=" + meterType +
-                        ", typeOfMeterAndInvoice=" + typeOfMeterAndInvoice +
+                        ", meterDest=" + meterDest +
+                        ", typeOfMeterInvoice=" + typeOfMeterInvoice +
                         ", serial='" + serial + '\'' +
                         ", initialValue=" + initialValue +
                         ", supplier=" + supplier +
                         ", flat=" + flat +
+                        ", building=" + building +
                         ", person=" + person +
                         '}';
         }

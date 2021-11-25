@@ -1,14 +1,8 @@
 package md.step.BlocAdmin.service;
 
 import md.step.BlocAdmin.exception.InvoicesNotFoundException;
-import md.step.BlocAdmin.model.Invoices;
-import md.step.BlocAdmin.model.Meters;
-import md.step.BlocAdmin.model.Suppliers;
-import md.step.BlocAdmin.model.TypeOfMeterAndInvoice;
-import md.step.BlocAdmin.repository.InvoicesRepository;
-import md.step.BlocAdmin.repository.MetersRepository;
-import md.step.BlocAdmin.repository.SuppliersRepository;
-import md.step.BlocAdmin.repository.TypeOfMeterAndInvoiceRepository;
+import md.step.BlocAdmin.model.*;
+import md.step.BlocAdmin.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -26,15 +21,20 @@ public class InvoicesService {
     private final InvoicesRepository invoicesRepository;
     private final SuppliersRepository suppliersRepository;
     private final MetersRepository metersRepository;
-    private TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository;
+    private final FileDBRepository fileDBRepository;
+    private final BuildingsRepository buildingsRepository;
+    private TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository;
 
     @Autowired
     public InvoicesService(InvoicesRepository invoicesRepository, SuppliersRepository suppliersRepository, MetersRepository metersRepository,
-                           TypeOfMeterAndInvoiceRepository typeOfMeterAndInvoiceRepository) {
+                           TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository, FileDBRepository fileDBRepository,
+                           BuildingsRepository buildingsRepository) {
         this.invoicesRepository = invoicesRepository;
         this.suppliersRepository = suppliersRepository;
         this.metersRepository = metersRepository;
-        this.typeOfMeterAndInvoiceRepository=typeOfMeterAndInvoiceRepository;
+        this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
+        this.fileDBRepository=fileDBRepository;
+        this.buildingsRepository=buildingsRepository;
     }
 
     public Invoices addInvoice(Invoices invoice) {
@@ -44,6 +44,9 @@ public class InvoicesService {
     public List<Invoices> findAll() {
         return invoicesRepository.findAll();
     }
+    public List<Invoices> getInvoicesByFlatId(Integer flatId,Status status) {
+        return invoicesRepository.findInvoicesByMeter_Flat_FlatidAndStatus(flatId,status);
+    }
 
     public List<Suppliers> findAllSuppliers() {
         return suppliersRepository.findAll();
@@ -52,22 +55,37 @@ public class InvoicesService {
     public List<Meters> findAllMeters() {
         return metersRepository.findAll();
     }
-    public List<TypeOfMeterAndInvoice> findAllTyepOfMeterAndInvoice() {
-        return typeOfMeterAndInvoiceRepository.findAll();
+    public List<Buildings> findAllBuildings() {
+        return buildingsRepository.findAll();
+    }
+    public List<TypeOfMeterInvoice> findAllTyepOfMeterAndInvoice() {
+        return typeOfMeterInvoiceRepository.findAll();
     }
 
     public Suppliers getSupplierByInvoiceId(Integer id) {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
         return invoice.get().getSupplier();
     }
+    public Set<Buildings> getBuildingsByInvoiceId(Integer id) {
+        Optional<Invoices> invoice = invoicesRepository.findById(id);
+        return invoice.get().getBuildings();
+    }
 
     public Meters getMetersByInvoiceId(Integer id) {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
         return invoice.get().getMeter();
     }
-    public TypeOfMeterAndInvoice getTypeOfMeterAndInvoiceByInvoiceId(Integer id) {
+//    public FileDB getInvoiceFileByInvoiceId(Integer id) {
+//        Optional<Invoices> invoice = invoicesRepository.findById(id);
+//        return invoice.get().getInvoiceFileId();
+//    }
+    public FileDB getFileByName(String id) {
+    return fileDBRepository.findAllByName(id);
+}
+
+    public TypeOfMeterInvoice getTypeOfMeterAndInvoiceByInvoiceId(Integer id) {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
-        return invoice.get().getTypeOfMeterAndInvoice();
+        return invoice.get().getTypeOfMeterInvoice();
     }
 
 
@@ -93,5 +111,7 @@ public class InvoicesService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.invoicesRepository.findAll(pageable);
     }
+
+
 
 }

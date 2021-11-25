@@ -18,7 +18,7 @@ public class Flats {
     private Integer flatNumber;
 
     private byte numberOfPerson;
-    private Integer ladder;
+    private Integer entrance;
     private double wallet;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "flats_persons",
@@ -41,12 +41,12 @@ public class Flats {
     public Flats() {
     }
 
-    public Flats(Integer flatid, Integer floor, Integer flatNumber, byte numberOfPerson, Integer ladder, double wallet, Set<Person> person, Buildings building, Set<Meters> meters) {
+    public Flats(Integer flatid, Integer floor, Integer flatNumber, byte numberOfPerson, Integer entrance, double wallet, Set<Person> person, Buildings building, Set<Meters> meters) {
         this.flatid = flatid;
         this.floor = floor;
         this.flatNumber = flatNumber;
         this.numberOfPerson = numberOfPerson;
-        this.ladder = ladder;
+        this.entrance = entrance;
         this.wallet = wallet;
         this.person = person;
         this.building = building;
@@ -85,12 +85,12 @@ public class Flats {
         this.numberOfPerson = numberOfPerson;
     }
 
-    public Integer getLadder() {
-        return ladder;
+    public Integer getEntrance() {
+        return entrance;
     }
 
-    public void setLadder(Integer ladder) {
-        this.ladder = ladder;
+    public void setEntrance(Integer entrance) {
+        this.entrance = entrance;
     }
 
     public double getWallet() {
@@ -131,7 +131,7 @@ public class Flats {
                 ", floors=" + floor +
                 ", flatNumbers=" + flatNumber +
                 ", numberOfPerson=" + numberOfPerson +
-                ", ladders=" + ladder +
+                ", entrance=" + entrance +
                 ", wallet=" + wallet +
                 ", person=" + person +
                 ", building=" + building +

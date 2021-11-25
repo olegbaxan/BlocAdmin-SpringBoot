@@ -3,15 +3,15 @@ package md.step.BlocAdmin.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
 @Table(	name = "invoices",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "invoiceNumber"),
-                @UniqueConstraint(columnNames = "meterDataCurrent"),
-                @UniqueConstraint(columnNames = "meterDataPrevious"),
-                @UniqueConstraint(columnNames = "invoiceSum"),
+
         })
 public class Invoices {
     @Id
@@ -28,7 +28,7 @@ public class Invoices {
             inverseJoinColumns = @JoinColumn(name = "status_id"))
     private Status status;
 
-    @NotBlank
+
     private Double meterDataCurrent;
 
     private Double meterDataPrevious;
@@ -49,7 +49,7 @@ public class Invoices {
     @JoinTable(	name = "invoice_typeofmeterinvoice",
             joinColumns = @JoinColumn(name = "invoice_id"),
             inverseJoinColumns = @JoinColumn(name = "type_of_meter_invoice_id"))
-    private TypeOfMeterAndInvoice typeOfMeterAndInvoice = new TypeOfMeterAndInvoice();
+    private TypeOfMeterInvoice typeOfMeterInvoice = new TypeOfMeterInvoice();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(	name = "invoice_supplier",
@@ -62,11 +62,18 @@ public class Invoices {
             joinColumns = @JoinColumn(name = "invoice_id"),
             inverseJoinColumns = @JoinColumn(name = "meter_id"))
     private Meters meter;
+    private String invoiceFileId ;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "invoice_building",
+            joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "buildings_id"))
+    private Set<Buildings> buildings = new HashSet<>();
 
     public Invoices() {
     }
 
-    public Invoices(Integer invoiceId, String invoiceNumber, Status status, Double meterDataCurrent, Double meterDataPrevious, Double invoiceSum, Double unitPrice, LocalDate payTill, LocalDate emittedDate, LocalDate dateOfPay, TypeOfMeterAndInvoice typeOfMeterAndInvoice, Suppliers supplier, Meters meter) {
+    public Invoices(Integer invoiceId, String invoiceNumber, Status status, Double meterDataCurrent, Double meterDataPrevious, Double invoiceSum, Double unitPrice, LocalDate payTill, LocalDate emittedDate, LocalDate dateOfPay, TypeOfMeterInvoice typeOfMeterInvoice, Suppliers supplier, Meters meter, String invoiceFileId, Set<Buildings> buildings) {
         this.invoiceId = invoiceId;
         this.invoiceNumber = invoiceNumber;
         this.status = status;
@@ -77,17 +84,35 @@ public class Invoices {
         this.payTill = payTill;
         this.emittedDate = emittedDate;
         this.dateOfPay = dateOfPay;
-        this.typeOfMeterAndInvoice = typeOfMeterAndInvoice;
+        this.typeOfMeterInvoice = typeOfMeterInvoice;
         this.supplier = supplier;
         this.meter = meter;
+        this.invoiceFileId = invoiceFileId;
+        this.buildings = buildings;
     }
 
-    public TypeOfMeterAndInvoice getTypeOfMeterAndInvoice() {
-        return typeOfMeterAndInvoice;
+    public Set<Buildings> getBuildings() {
+        return buildings;
     }
 
-    public void setTypeOfMeterAndInvoice(TypeOfMeterAndInvoice typeOfMeterAndInvoice) {
-        this.typeOfMeterAndInvoice = typeOfMeterAndInvoice;
+    public void setBuildings(Set<Buildings> buildings) {
+        this.buildings = buildings;
+    }
+
+    public String getInvoiceFileId() {
+        return invoiceFileId;
+    }
+
+    public void setInvoiceFileId(String invoiceFileId) {
+        this.invoiceFileId = invoiceFileId;
+    }
+
+    public TypeOfMeterInvoice getTypeOfMeterInvoice() {
+        return typeOfMeterInvoice;
+    }
+
+    public void setTypeOfMeterInvoice(TypeOfMeterInvoice typeOfMeterAndInvoice) {
+        this.typeOfMeterInvoice = typeOfMeterAndInvoice;
     }
 
     public Integer getInvoiceId() {
@@ -199,9 +224,11 @@ public class Invoices {
                 ", payTill=" + payTill +
                 ", emittedDate=" + emittedDate +
                 ", dateOfPay=" + dateOfPay +
-                ", typeOfMeterAndInvoice=" + typeOfMeterAndInvoice +
+                ", typeOfMeterInvoice=" + typeOfMeterInvoice +
                 ", supplier=" + supplier +
                 ", meter=" + meter +
+                ", invoiceFileId='" + invoiceFileId + '\'' +
+                ", buildings=" + buildings +
                 '}';
     }
 }

@@ -82,6 +82,10 @@ public class FlatsService {
         return flatsRepository.findById(id)
                 .orElseThrow(() -> new FlatsNotFoundException(id));
     }
+    public List<Flats> findFlatsByPersonId(Integer id) throws FlatsNotFoundException {
+        Person person= personRepository.findAllByPersonid(id);
+        return flatsRepository.findFlatsByPerson(person);
+    }
 
     public void deleteFlat(Integer id) throws FlatsNotFoundException {
         final Flats flat = this.flatsRepository.findById(id).orElseThrow(() -> new FlatsNotFoundException(id));
