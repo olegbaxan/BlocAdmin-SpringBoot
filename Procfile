@@ -1,1 +1,1 @@
-web: md.step.BlocAdmin.BlocAdminApplication
+worker: md.step.BlocAdmin.BlocAdminApplication
