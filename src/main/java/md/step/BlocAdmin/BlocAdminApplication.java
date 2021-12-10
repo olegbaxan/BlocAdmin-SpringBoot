@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -15,14 +13,14 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 
 @SpringBootApplication
-//public class BlocAdminApplication {
-public class BlocAdminApplication extends SpringBootServletInitializer {
+public class BlocAdminApplication {
+//public class BlocAdminApplication extends SpringBootServletInitializer {
 
 	//https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto.traditional-deployment.war
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(BlocAdminApplication.class);
-	}
+//	@Override
+//	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+//		return application.sources(BlocAdminApplication.class);
+//	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(BlocAdminApplication.class, args);
