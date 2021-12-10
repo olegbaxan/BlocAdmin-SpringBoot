@@ -1,1 +1,1 @@
-web: -java md.step.BlocAdmin.BlocAdminApplication
+web: md.step.BlocAdmin.BlocAdminApplication
