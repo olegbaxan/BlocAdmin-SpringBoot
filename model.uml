@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>md.step.BlocAdmin.model</OriginalElement>
+  <nodes>
+    <node x="433.0" y="324.0">md.step.BlocAdmin.model.FileDB</node>
+    <node x="-1406.5" y="300.0">md.step.BlocAdmin.model.ERole</node>
+    <node x="-1129.5" y="746.0">md.step.BlocAdmin.model.Suppliers</node>
+    <node x="158.0" y="429.0">md.step.BlocAdmin.model.EStatus</node>
+    <node x="-913.0" y="954.0">md.step.BlocAdmin.model.RefreshToken</node>
+    <node x="-1412.5" y="1004.0">md.step.BlocAdmin.model.Flats</node>
+    <node x="-1386.5" y="451.0">md.step.BlocAdmin.model.Role</node>
+    <node x="371.5" y="991.0">md.step.BlocAdmin.model.MeterData</node>
+    <node x="-618.5" y="1118.0">md.step.BlocAdmin.model.Withdrawn</node>
+    <node x="-1122.5" y="534.0">md.step.BlocAdmin.model.Buildings</node>
+    <node x="-234.0" y="324.0">md.step.BlocAdmin.model.ETypeOfMeterInvoice</node>
+    <node x="-587.5" y="794.0">md.step.BlocAdmin.model.Meters</node>
+    <node x="184.5" y="871.0">md.step.BlocAdmin.model.Status</node>
+    <node x="-273.0" y="626.0">md.step.BlocAdmin.model.TypeOfMeterInvoice</node>
+    <node x="-497.5" y="556.0">md.step.BlocAdmin.model.MeterDest</node>
+    <node x="-1160.5" y="1118.0">md.step.BlocAdmin.model.Payments</node>
+    <node x="-1129.5" y="302.0">md.step.BlocAdmin.model.Address</node>
+    <node x="-167.5" y="973.0">md.step.BlocAdmin.model.Invoices</node>
+    <node x="-495.5" y="313.0">md.step.BlocAdmin.model.EMeterDest</node>
+    <node x="-1426.0" y="575.0">md.step.BlocAdmin.model.Person</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="md.step.BlocAdmin.model.Payments" target="md.step.BlocAdmin.model.Person" relationship="CREATE">
+      <point x="-75.5" y="63.5" />
+      <point x="-1443.5" y="1253.5" />
+      <point x="-1443.5" y="735.0" />
+      <point x="-96.0" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Status" relationship="TO_ONE">
+      <point x="132.5" y="-15.0" />
+      <point x="171.5" y="1140.0" />
+      <point x="171.5" y="975.0" />
+      <point x="192.0" y="975.0" />
+      <point x="-53.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Withdrawn" target="md.step.BlocAdmin.model.Flats" relationship="CREATE">
+      <point x="-93.5" y="69.5" />
+      <point x="-814.0" y="1259.5" />
+      <point x="-814.0" y="1240.0" />
+      <point x="-953.0" y="1240.0" />
+      <point x="-953.0" y="1041.0" />
+      <point x="82.5" y="-79.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.TypeOfMeterInvoice" relationship="DEPENDENCY">
+      <point x="50.0" y="-116.0" />
+      <point x="-405.0" y="673.5" />
+      <point x="-98.0" y="8.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterDest" target="md.step.BlocAdmin.model.EMeterDest" relationship="DEPENDENCY">
+      <point x="15.0" y="-39.0" />
+      <point x="15.0" y="72.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Role" target="md.step.BlocAdmin.model.ERole" relationship="DEPENDENCY">
+      <point x="0.0" y="-39.0" />
+      <point x="0.0" y="50.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Withdrawn" target="md.step.BlocAdmin.model.Invoices" relationship="CREATE">
+      <point x="93.5" y="15.0" />
+      <point x="-132.5" y="50.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Payments" target="md.step.BlocAdmin.model.Flats" relationship="TO_ONE">
+      <point x="-15.0" y="-72.0" />
+      <point x="-1100.0" y="1056.0" />
+      <point x="-1223.0" y="1056.0" />
+      <point x="-1223.0" y="1097.0" />
+      <point x="82.5" y="-23.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Person" relationship="TO_MANY">
+      <point x="82.5" y="5.5" />
+      <point x="-1178.0" y="1125.5" />
+      <point x="-1178.0" y="1097.0" />
+      <point x="-749.5" y="1097.0" />
+      <point x="-749.5" y="728.5" />
+      <point x="96.0" y="-6.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Suppliers" target="md.step.BlocAdmin.model.Address" relationship="TO_ONE">
+      <point x="0.0" y="-94.0" />
+      <point x="-1050.0" y="688.5" />
+      <point x="-953.0" y="688.5" />
+      <point x="-953.0" y="501.0" />
+      <point x="-1050.0" y="501.0" />
+      <point x="0.0" y="83.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Person" relationship="DEPENDENCY">
+      <point x="0.0" y="-116.0" />
+      <point x="0.0" y="160.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterData" target="md.step.BlocAdmin.model.Status" relationship="DEPENDENCY">
+      <point x="0.0" y="-94.0" />
+      <point x="455.0" y="970.0" />
+      <point x="245.0" y="970.0" />
+      <point x="0.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Buildings" target="md.step.BlocAdmin.model.Address" relationship="DEPENDENCY">
+      <point x="-15.0" y="-61.0" />
+      <point x="-15.0" y="83.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Withdrawn" target="md.step.BlocAdmin.model.Invoices" relationship="TO_ONE">
+      <point x="93.5" y="0.0" />
+      <point x="-132.5" y="35.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Suppliers" relationship="DEPENDENCY">
+      <point x="-15.0" y="-116.0" />
+      <point x="-470.0" y="778.0" />
+      <point x="-953.0" y="778.0" />
+      <point x="-953.0" y="825.0" />
+      <point x="79.5" y="-15.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Status" target="md.step.BlocAdmin.model.EStatus" relationship="DEPENDENCY">
+      <point x="15.0" y="-39.0" />
+      <point x="15.0" y="61.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.TypeOfMeterInvoice" relationship="CREATE">
+      <point x="15.0" y="-182.0" />
+      <point x="-20.0" y="665.0" />
+      <point x="98.0" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Buildings" relationship="TO_ONE">
+      <point x="0.0" y="116.0" />
+      <point x="-1330.0" y="1315.0" />
+      <point x="-305.0" y="1315.0" />
+      <point x="-305.0" y="651.5" />
+      <point x="72.5" y="56.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Suppliers" relationship="TO_ONE">
+      <point x="0.0" y="-182.0" />
+      <point x="-35.0" y="762.0" />
+      <point x="-938.0" y="762.0" />
+      <point x="-938.0" y="840.0" />
+      <point x="79.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Buildings" relationship="DEPENDENCY">
+      <point x="56.0" y="116.0" />
+      <point x="-399.0" y="1289.0" />
+      <point x="-1208.0" y="1289.0" />
+      <point x="-1208.0" y="595.0" />
+      <point x="-72.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Withdrawn" target="md.step.BlocAdmin.model.Flats" relationship="TO_ONE">
+      <point x="-93.5" y="0.0" />
+      <point x="-992.0" y="1190.0" />
+      <point x="-992.0" y="1056.0" />
+      <point x="-1223.0" y="1056.0" />
+      <point x="-1223.0" y="1097.0" />
+      <point x="82.5" y="-23.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Meters" relationship="DEPENDENCY">
+      <point x="-45.0" y="116.0" />
+      <point x="-1375.0" y="1338.0" />
+      <point x="-384.0" y="1338.0" />
+      <point x="71.0" y="116.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Flats" relationship="DEPENDENCY">
+      <point x="-60.0" y="-116.0" />
+      <point x="-515.0" y="282.5" />
+      <point x="-1458.5" y="282.5" />
+      <point x="-1458.5" y="1120.0" />
+      <point x="-82.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Buildings" relationship="TO_MANY">
+      <point x="-132.5" y="0.0" />
+      <point x="-305.0" y="1155.0" />
+      <point x="-305.0" y="651.5" />
+      <point x="72.5" y="56.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Meters" relationship="DEPENDENCY">
+      <point x="-132.5" y="134.0" />
+      <point x="-265.5" y="1289.0" />
+      <point x="-265.5" y="1338.0" />
+      <point x="-384.0" y="1338.0" />
+      <point x="71.0" y="116.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.RefreshToken" target="md.step.BlocAdmin.model.Person" relationship="TO_ONE">
+      <point x="0.0" y="61.0" />
+      <point x="-840.0" y="1097.0" />
+      <point x="-749.5" y="1097.0" />
+      <point x="-749.5" y="728.5" />
+      <point x="96.0" y="-6.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Person" target="md.step.BlocAdmin.model.Role" relationship="DEPENDENCY">
+      <point x="15.0" y="-160.0" />
+      <point x="15.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.TypeOfMeterInvoice" target="md.step.BlocAdmin.model.ETypeOfMeterInvoice" relationship="DEPENDENCY">
+      <point x="35.0" y="-39.0" />
+      <point x="0.0" y="61.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Person" relationship="TO_ONE">
+      <point x="0.0" y="116.0" />
+      <point x="-455.0" y="1097.0" />
+      <point x="-749.5" y="1097.0" />
+      <point x="-749.5" y="728.5" />
+      <point x="96.0" y="-6.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Role" target="md.step.BlocAdmin.model.ERole" relationship="TO_ONE">
+      <point x="15.0" y="-39.0" />
+      <point x="15.0" y="50.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterDest" target="md.step.BlocAdmin.model.EMeterDest" relationship="TO_ONE">
+      <point x="0.0" y="-39.0" />
+      <point x="0.0" y="72.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterData" target="md.step.BlocAdmin.model.Status" relationship="TO_ONE">
+      <point x="-83.5" y="0.0" />
+      <point x="171.5" y="1085.0" />
+      <point x="171.5" y="975.0" />
+      <point x="192.0" y="975.0" />
+      <point x="-53.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Buildings" relationship="TO_ONE">
+      <point x="41.0" y="116.0" />
+      <point x="-414.0" y="1315.0" />
+      <point x="-305.0" y="1315.0" />
+      <point x="-305.0" y="651.5" />
+      <point x="72.5" y="56.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.TypeOfMeterInvoice" relationship="TO_ONE">
+      <point x="-132.5" y="-158.5" />
+      <point x="-262.0" y="996.5" />
+      <point x="-262.0" y="747.0" />
+      <point x="-160.0" y="747.0" />
+      <point x="15.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Status" relationship="DEPENDENCY">
+      <point x="132.5" y="0.0" />
+      <point x="341.0" y="1155.0" />
+      <point x="341.0" y="970.0" />
+      <point x="245.0" y="970.0" />
+      <point x="0.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.MeterDest" relationship="TO_ONE">
+      <point x="20.0" y="-116.0" />
+      <point x="-15.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterData" target="md.step.BlocAdmin.model.Meters" relationship="TO_ONE">
+      <point x="0.0" y="94.0" />
+      <point x="455.0" y="1360.0" />
+      <point x="115.0" y="1360.0" />
+      <point x="115.0" y="910.0" />
+      <point x="132.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Suppliers" target="md.step.BlocAdmin.model.Address" relationship="DEPENDENCY">
+      <point x="-15.0" y="-94.0" />
+      <point x="-1065.0" y="688.5" />
+      <point x="-1147.0" y="688.5" />
+      <point x="-1147.0" y="518.0" />
+      <point x="-1065.0" y="518.0" />
+      <point x="-15.0" y="83.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Flats" relationship="TO_ONE">
+      <point x="-132.5" y="15.0" />
+      <point x="-938.0" y="925.0" />
+      <point x="-938.0" y="1056.0" />
+      <point x="-1223.0" y="1056.0" />
+      <point x="-1223.0" y="1097.0" />
+      <point x="82.5" y="-23.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Payments" target="md.step.BlocAdmin.model.Flats" relationship="CREATE">
+      <point x="75.5" y="69.5" />
+      <point x="-814.0" y="1259.5" />
+      <point x="-814.0" y="1240.0" />
+      <point x="-953.0" y="1240.0" />
+      <point x="-953.0" y="1041.0" />
+      <point x="82.5" y="-79.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Payments" target="md.step.BlocAdmin.model.Person" relationship="TO_ONE">
+      <point x="0.0" y="-72.0" />
+      <point x="-1085.0" y="1097.0" />
+      <point x="-749.5" y="1097.0" />
+      <point x="-749.5" y="728.5" />
+      <point x="96.0" y="-6.5" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.RefreshToken" target="md.step.BlocAdmin.model.Person" relationship="DEPENDENCY">
+      <point x="-73.0" y="0.0" />
+      <point x="-1193.0" y="1015.0" />
+      <point x="-1193.0" y="969.0" />
+      <point x="-1330.0" y="969.0" />
+      <point x="0.0" y="160.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.MeterDest" relationship="DEPENDENCY">
+      <point x="35.0" y="-116.0" />
+      <point x="0.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Buildings" target="md.step.BlocAdmin.model.Address" relationship="TO_ONE">
+      <point x="0.0" y="-61.0" />
+      <point x="0.0" y="83.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Meters" relationship="TO_ONE">
+      <point x="0.0" y="182.0" />
+      <point x="-35.0" y="1360.0" />
+      <point x="115.0" y="1360.0" />
+      <point x="115.0" y="910.0" />
+      <point x="132.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Meters" relationship="TO_MANY">
+      <point x="-30.0" y="116.0" />
+      <point x="-1360.0" y="1360.0" />
+      <point x="115.0" y="1360.0" />
+      <point x="115.0" y="910.0" />
+      <point x="132.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.TypeOfMeterInvoice" relationship="TO_ONE">
+      <point x="132.5" y="-15.0" />
+      <point x="-262.0" y="895.0" />
+      <point x="-262.0" y="747.0" />
+      <point x="-160.0" y="747.0" />
+      <point x="15.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Person" target="md.step.BlocAdmin.model.Role" relationship="TO_MANY">
+      <point x="0.0" y="-160.0" />
+      <point x="0.0" y="39.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.MeterData" target="md.step.BlocAdmin.model.Meters" relationship="DEPENDENCY">
+      <point x="15.0" y="94.0" />
+      <point x="470.0" y="1375.0" />
+      <point x="-1375.0" y="1375.0" />
+      <point x="-1375.0" y="1338.0" />
+      <point x="-384.0" y="1338.0" />
+      <point x="71.0" y="116.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Suppliers" relationship="TO_ONE">
+      <point x="0.0" y="-116.0" />
+      <point x="-455.0" y="762.0" />
+      <point x="-938.0" y="762.0" />
+      <point x="-938.0" y="840.0" />
+      <point x="79.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Flats" target="md.step.BlocAdmin.model.Buildings" relationship="DEPENDENCY">
+      <point x="-15.0" y="116.0" />
+      <point x="-1345.0" y="1289.0" />
+      <point x="-1208.0" y="1289.0" />
+      <point x="-1208.0" y="595.0" />
+      <point x="-72.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Buildings" relationship="DEPENDENCY">
+      <point x="-132.5" y="160.0" />
+      <point x="-290.0" y="1315.0" />
+      <point x="-290.0" y="1289.0" />
+      <point x="-1208.0" y="1289.0" />
+      <point x="-1208.0" y="595.0" />
+      <point x="-72.5" y="0.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.TypeOfMeterInvoice" target="md.step.BlocAdmin.model.ETypeOfMeterInvoice" relationship="TO_ONE">
+      <point x="50.0" y="-39.0" />
+      <point x="15.0" y="61.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Invoices" target="md.step.BlocAdmin.model.Suppliers" relationship="DEPENDENCY">
+      <point x="-15.0" y="-182.0" />
+      <point x="-50.0" y="778.0" />
+      <point x="-953.0" y="778.0" />
+      <point x="-953.0" y="825.0" />
+      <point x="79.5" y="-15.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Status" target="md.step.BlocAdmin.model.EStatus" relationship="TO_ONE">
+      <point x="0.0" y="-39.0" />
+      <point x="0.0" y="61.0" />
+    </edge>
+    <edge source="md.step.BlocAdmin.model.Meters" target="md.step.BlocAdmin.model.Person" relationship="DEPENDENCY">
+      <point x="-132.5" y="0.0" />
+      <point x="-953.0" y="910.0" />
+      <point x="-953.0" y="969.0" />
+      <point x="-1330.0" y="969.0" />
+      <point x="0.0" y="160.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.550763701707098" showDependencies="true" x="-456.0" y="828.5" />
+  <SelectedNodes>
+    <node>md.step.BlocAdmin.model.FileDB</node>
+    <node>md.step.BlocAdmin.model.ERole</node>
+    <node>md.step.BlocAdmin.model.Suppliers</node>
+    <node>md.step.BlocAdmin.model.EStatus</node>
+    <node>md.step.BlocAdmin.model.RefreshToken</node>
+    <node>md.step.BlocAdmin.model.Flats</node>
+    <node>md.step.BlocAdmin.model.Role</node>
+    <node>md.step.BlocAdmin.model.MeterData</node>
+    <node>md.step.BlocAdmin.model.Withdrawn</node>
+    <node>md.step.BlocAdmin.model.Buildings</node>
+    <node>md.step.BlocAdmin.model.ETypeOfMeterInvoice</node>
+    <node>md.step.BlocAdmin.model.Meters</node>
+    <node>md.step.BlocAdmin.model.Status</node>
+    <node>md.step.BlocAdmin.model.TypeOfMeterInvoice</node>
+    <node>md.step.BlocAdmin.model.MeterDest</node>
+    <node>md.step.BlocAdmin.model.Payments</node>
+    <node>md.step.BlocAdmin.model.Address</node>
+    <node>md.step.BlocAdmin.model.Invoices</node>
+    <node>md.step.BlocAdmin.model.EMeterDest</node>
+    <node>md.step.BlocAdmin.model.Person</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

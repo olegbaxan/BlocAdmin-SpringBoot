@@ -6,7 +6,11 @@ import javax.persistence.*;
 import java.util.Arrays;
 
 @Entity
-@Table(name = "files")
+@Table(name = "files",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "name"),
+
+        })
 public class FileDB {
     @Id
     @GeneratedValue(generator = "uuid")

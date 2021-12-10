@@ -22,7 +22,9 @@ public interface MeterDataRepository extends JpaRepository<MeterData, Integer> {
             "inner join application.meterdata_status ms on ms.meterdata_id=m.meterdataid \n" +
             "where mm.meter_id=?1 order by m.previous_value DESC limit 1",nativeQuery = true)
     MeterData findAllByMaxCurrentValueAndyMeterId(Integer meter_id);
-
+Page <MeterData> findDistinctByMeter_SerialContainingIgnoreCase(String serial, Pageable pageable);
+Page <MeterData> findDistinctByMeter_SerialContainingIgnoreCaseOrMeter_Supplier_SupplierNameContainingIgnoreCaseOrMeter_Person_NameContainingIgnoreCaseOrMeter_Person_SurnameContainingIgnoreCaseOrMeter_Building_Address_CityStartingWithIgnoreCaseOrMeter_Building_Address_RaionStartingWithIgnoreCaseOrMeter_Building_Address_StreetStartingWithIgnoreCase(String serial,String supplier,String name, String surname, String city, String raion, String street, Pageable pageable);
+//
 //    Page findAllByStatusNameStatusNew(Pageable page);
     Page findMeterDataByStatus_Name(EStatus status, Pageable page);
 //    Page findMeterDataByStatusNameAndMeterTypeOfMeterInvoice(EStatus status, ETypeOfMeterInvoice type, Pageable page);

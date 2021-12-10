@@ -1,14 +1,8 @@
 package md.step.BlocAdmin.api;
 
 import md.step.BlocAdmin.exception.FlatsNotFoundException;
-import md.step.BlocAdmin.model.Buildings;
-import md.step.BlocAdmin.model.Flats;
-import md.step.BlocAdmin.model.Meters;
-import md.step.BlocAdmin.model.Person;
-import md.step.BlocAdmin.repository.BuildingsRepository;
-import md.step.BlocAdmin.repository.FlatsRepository;
-import md.step.BlocAdmin.repository.MetersRepository;
-import md.step.BlocAdmin.repository.PersonRepository;
+import md.step.BlocAdmin.model.*;
+import md.step.BlocAdmin.repository.*;
 import md.step.BlocAdmin.service.BuidingsService;
 import md.step.BlocAdmin.service.FlatsService;
 import md.step.BlocAdmin.service.MetersService;
@@ -23,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,13 +36,17 @@ public class FlatsController {
     private PersonRepository personRepository;
     @Autowired
     private MetersRepository metersRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
-    public FlatsController(FlatsService flatsService, BuidingsService buidingsService, PersonService personService, MetersService metersService) {
+    public FlatsController(FlatsService flatsService, BuidingsService buidingsService, PersonService personService,
+                           MetersService metersService, RoleRepository roleRepository) {
         this.flatsService = flatsService;
         this.buidingsService = buidingsService;
         this.personService = personService;
         this.metersService = metersService;
+        this.roleRepository=roleRepository;
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
@@ -64,8 +63,8 @@ public class FlatsController {
             if (title == null) {
                 pageFlats = flatsRepository.findAll(paging);
             } else {
-                pageFlats = flatsRepository.findAll(paging);
-//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
+//                pageFlats = flatsRepository.findAll(paging);
+                pageFlats = flatsRepository.findAllDistinctFlatsByBuilding_Address_CityStartingWithIgnoreCaseOrBuilding_Address_RaionStartingWithIgnoreCaseOrBuilding_Address_StreetStartingWithIgnoreCaseOrPerson_NameStartingWithIgnoreCaseOrPerson_SurnameStartingWithIgnoreCase( title,title,title,title,title, paging);
 
             }
 
@@ -82,6 +81,39 @@ public class FlatsController {
         }
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("available/{id}")
+    public ResponseEntity<List<Integer>> getAllAvailableFLatsNumbers(@PathVariable("id") Integer id) {
+        try {
+            List<Flats> flats = new ArrayList<Flats>();
+            List<Integer> availableFlats = new ArrayList<>();
+            Buildings building=new Buildings();
+            if (id>0) {
+                building = buildingsRepository.findAllByBuildingid(id);
+                flats=flatsRepository.findFlatsByBuilding(building);
+            }
+            if (building.getFlats()>0){
+                System.out.println("flatBuilding = "+building.getFlats()+1);
+                for (int i=1;i<building.getFlats()+1;i++){
+                    boolean used=false;
+                    for (int j=0;j<flats.size();j++){
+                        if (i==flats.get(j).getFlatNumber()){
+                            used=true;
+                            break;
+                        }
+                    }
+                    if (!used){
+                        System.out.println("available = "+i);
+                        availableFlats.add(i);
+                    }
+                }
+            }
+
+            return new ResponseEntity<>(availableFlats,HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("buildings")
     public ResponseEntity<List<Buildings>> getBuildings() {
         List<Buildings> buildings = flatsService.findAllBuildings();
@@ -91,6 +123,9 @@ public class FlatsController {
     @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = flatsService.findAllPerson();
+        persons = persons.stream().filter(p -> p.getRoles().contains(roleRepository.findByName(ERole.ROLE_USER).get())).collect(Collectors.toList());
+
+
         return ResponseEntity.ok(persons);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
@@ -98,6 +133,12 @@ public class FlatsController {
     public ResponseEntity<List<Meters>> getMeters() {
         List<Meters> meters = flatsService.findAllMeters();
         return ResponseEntity.ok(meters);
+    }
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @GetMapping("allnegativewallet")
+    public ResponseEntity<List<Flats>> getFlatsNegativeWallet() {
+        List<Flats> flats = flatsRepository.findFlatsByWalletLessThan(0.0);//negative Wallet
+        return ResponseEntity.ok(flats);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
@@ -144,11 +185,13 @@ public class FlatsController {
 
         Set<Meters> meters = new HashSet<>();
         Set<Meters> metersId = flat.getMeters();
+        if(metersId!=null){
         metersId.forEach(meter -> {
             Meters meterToAdd = metersRepository.findAllByMeterid(meter.getMeterId());
             meters.add(meterToAdd);
         });
         flat.setMeters(meters);
+        }
 
         Set<Person> persons = new HashSet<>();
         Set<Person> flatPerson = flat.getPerson();

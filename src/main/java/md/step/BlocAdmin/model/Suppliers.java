@@ -49,7 +49,7 @@ public class Suppliers {
 
 
 
-    private EMeterDest meterDestination;
+//    private EMeterDest meterDestination;
 
     public Suppliers() {
     }
@@ -120,13 +120,13 @@ public class Suppliers {
         this.address = address;
     }
 
-    public EMeterDest getMeterDestination() {
-        return meterDestination;
-    }
-
-    public void setMeterDestination(EMeterDest meterDestination) {
-        this.meterDestination = meterDestination;
-    }
+//    public EMeterDest getMeterDestination() {
+//        return meterDestination;
+//    }
+//
+//    public void setMeterDestination(EMeterDest meterDestination) {
+//        this.meterDestination = meterDestination;
+//    }
 
     @Override
     public String toString() {
@@ -138,7 +138,6 @@ public class Suppliers {
                 ", bankCode='" + bankCode + '\'' +
                 ", details='" + details + '\'' +
                 ", address=" + address +
-                ", meterDestination=" + meterDestination +
                 '}';
     }
 }

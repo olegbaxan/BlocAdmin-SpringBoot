@@ -23,6 +23,7 @@ public class FileStorageService {
     }
 
     public FileDB getFile(String id) {
+        System.out.println("FileId = "+id);
         return fileDBRepository.findById(id).get();
     }
 

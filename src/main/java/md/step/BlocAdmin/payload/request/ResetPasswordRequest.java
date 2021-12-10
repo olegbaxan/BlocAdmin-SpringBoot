@@ -1,7 +1,11 @@
 package md.step.BlocAdmin.payload.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class ResetPasswordRequest {
+    @NotBlank
     private String token;
+    @NotBlank
     private String password;
 
     public String getToken() {

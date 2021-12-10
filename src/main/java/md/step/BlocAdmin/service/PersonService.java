@@ -59,6 +59,7 @@ public class PersonService {
                 .orElseThrow(() -> new PersonNotFoundException(id));
     }
 
+
     public void deletePerson(Integer id) throws PersonNotFoundException {
         final Person person = this.personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException(id));
         personRepository.delete(person);

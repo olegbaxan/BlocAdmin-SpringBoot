@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -85,10 +86,10 @@ public class InitialisationService {
         typeOFBuilding.setId(1);
         typeOFBuilding.setName(ETypeOfMeterInvoice.TYPE_BUILDING);
         typeOfMeterInvoiceRepository.save(typeOFBuilding);
-        //			TypeOfMeterInvoice typeOFLadder = new TypeOfMeterInvoice();
-//			typeOFLadder.setId(2);
-//			typeOFLadder.setName(ETypeOfMeterInvoice.TYPE_LADDER);
-//			typeOfMeterInvoiceRepository.save(typeOFLadder);
+        TypeOfMeterInvoice typeOFLadder = new TypeOfMeterInvoice();
+        typeOFLadder.setId(2);
+        typeOFLadder.setName(ETypeOfMeterInvoice.TYPE_LADDER);
+        typeOfMeterInvoiceRepository.save(typeOFLadder);
         TypeOfMeterInvoice typeOFFlats = new TypeOfMeterInvoice();
         typeOFFlats.setId(3);
         typeOFFlats.setName(ETypeOfMeterInvoice.TYPE_FLATS);
@@ -98,22 +99,41 @@ public class InitialisationService {
         typeOFPerson.setName(ETypeOfMeterInvoice.TYPE_PERSON);
         typeOfMeterInvoiceRepository.save(typeOFPerson);
 
-        if (!personRepository.existsByUsername("oleg")) {
+        if (!personRepository.existsByUsername("admin")) {
             Person admin = new Person();
             Set<Role> roles = new HashSet<>();
-            admin.setUsername("oleg");
-            admin.setEmail("oleg@mail.md");
-            admin.setPassword(encoder.encode("oleg12"));
-            admin.setName("oleg");
-            admin.setSurname("oleg");
+            admin.setUsername("admin");
+            admin.setEmail("oleg.baxan@gmail.com");
+            admin.setPassword(encoder.encode("admin123"));
+            admin.setName("Oleg");
+            admin.setSurname("Baxan");
             admin.setIdnp("1234567890123");
             admin.setMobile("067777777");
             admin.setDescription("Some text description");
+            admin.setRegDate(LocalDate.now());
             Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(adminRole);
             admin.setRoles(roles);
 
             personRepository.save(admin);
+        }
+        if (!personRepository.existsByUsername("blocadmin")) {
+            Person blocadmin = new Person();
+            Set<Role> roles = new HashSet<>();
+            blocadmin.setUsername("blocadmin");
+            blocadmin.setEmail("blocadmin@gmail.com");
+            blocadmin.setPassword(encoder.encode("blocadmin"));
+            blocadmin.setName("blocadmin");
+            blocadmin.setSurname("blocadmin");
+            blocadmin.setIdnp("1234567890124");
+            blocadmin.setMobile("067777775");
+            blocadmin.setDescription("Building Administrator");
+            blocadmin.setRegDate(LocalDate.now());
+            Role blocadminRole = roleRepository.findByName(ERole.ROLE_BLOCADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(blocadminRole);
+            blocadmin.setRoles(roles);
+
+            personRepository.save(blocadmin);
         }
     }
 }

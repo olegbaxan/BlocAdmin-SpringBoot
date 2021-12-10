@@ -72,6 +72,10 @@ public class MetersService {
         return buildingsRepository.findAll();
     }
 
+    public Boolean checkSerialExist(String serial) {
+        return metersRepository.existsBySerial(serial);
+    }
+
 
     public Suppliers getSupplierByMeterId(Integer id) {
         Optional<Meters> meter = metersRepository.findById(id);

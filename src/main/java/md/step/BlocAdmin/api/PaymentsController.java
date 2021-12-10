@@ -4,10 +4,8 @@ import md.step.BlocAdmin.exception.FlatsNotFoundException;
 import md.step.BlocAdmin.exception.InvoicesNotFoundException;
 import md.step.BlocAdmin.exception.PaymentsNotFoundException;
 import md.step.BlocAdmin.model.*;
-import md.step.BlocAdmin.repository.FlatsRepository;
-import md.step.BlocAdmin.repository.PaymentsRepository;
-import md.step.BlocAdmin.repository.PersonRepository;
-import md.step.BlocAdmin.repository.StatusRepository;
+import md.step.BlocAdmin.repository.*;
+import md.step.BlocAdmin.security.services.EmailServiceImpl;
 import md.step.BlocAdmin.service.FlatsService;
 import md.step.BlocAdmin.service.InvoicesService;
 import md.step.BlocAdmin.service.PaymentsService;
@@ -16,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -45,16 +46,20 @@ public class PaymentsController {
     private InvoicesService invoicesService;
     @Autowired
     private StatusRepository statusRepository;
-
+    @Autowired
+    private EmailServiceImpl emailService;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     public PaymentsController(PaymentsService paymentsService, PersonService personService, FlatsService flatsService,
-                              InvoicesService invoicesService,StatusRepository statusRepository) {
+                              InvoicesService invoicesService,StatusRepository statusRepository,RoleRepository roleRepository) {
         this.paymentsService = paymentsService;
         this.personService = personService;
         this.flatsService = flatsService;
         this.invoicesService=invoicesService;
         this.statusRepository=statusRepository;
+        this.roleRepository=roleRepository;
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
@@ -65,13 +70,13 @@ public class PaymentsController {
     ) {
         try {
             List<Payments> payments = new ArrayList<Payments>();
-            Pageable paging = PageRequest.of(page, size);
+            Pageable paging = PageRequest.of(page, size, Sort.by("paymentid").descending());
 
             Page<Payments> pagePayments;
             if (title == null) {
                 pagePayments = paymentsRepository.findAll(paging);
             } else {
-                pagePayments = paymentsRepository.findAll(paging);
+                pagePayments = paymentsRepository.findDistinctByPerson_NameContainingIgnoreCaseOrPerson_SurnameContainingIgnoreCase(title,title,paging);
             }
 
             payments = pagePayments.getContent();
@@ -90,6 +95,7 @@ public class PaymentsController {
     @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = paymentsService.findAllPersons();
+        persons = persons.stream().filter(p -> p.getRoles().contains(roleRepository.findByName(ERole.ROLE_USER).get())).collect(Collectors.toList());
         return ResponseEntity.ok(persons);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
@@ -144,6 +150,39 @@ public class PaymentsController {
                 payments.get(i).setFlat(flat);
                 paymentsService.addPayment(payments.get(i));
             }
+
+            // Email message
+                SimpleMailMessage PaymentEmail = new SimpleMailMessage();
+            PaymentEmail.setFrom("oleg.baxan.test@gmail.com");
+            PaymentEmail.setTo(person.getEmail());
+            PaymentEmail.setSubject("Information about a new invoice");
+            PaymentEmail.setText("Hello, "+ person.getName()+ " "+ person.getSurname()+
+                        "\n\nA new payment was made for your flat: "+ flat.getFlatNumber()+
+                        ".\n - Payment: "+payments.get(i).getSum()+
+                        "\n - Wallet: "+flat.getWallet()
+
+                );
+
+                emailService.sendEmail(PaymentEmail);
+
+
+            //After payment check if Flat has invoices that needs to be paid
+            Status status=statusRepository.findByName(EStatus.STATUS_NEW);// for TEST
+
+            List<Invoices> flatInvoices = invoicesService.getInvoicesByFlatId(flat.getFlatid(),status);
+            if(flatInvoices.size()>0){
+                for (int j=0;j<flatInvoices.size();j++){
+                    System.out.println("InvoiceID = "+ flatInvoices.get(j).getInvoiceId());
+                    System.out.println("flat.getWallet() = "+ flat.getWallet());
+                    flat.setWallet(flat.getWallet()-flatInvoices.get(j).getInvoiceSum());
+                    flatInvoices.get(j).setStatus(statusRepository.findByName(EStatus.STATUS_PAYED));
+                    invoicesService.updateInvoice(flatInvoices.get(j));
+                }
+                flatsService.updateFlat(flat);
+            }
+
+
+
         }
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }

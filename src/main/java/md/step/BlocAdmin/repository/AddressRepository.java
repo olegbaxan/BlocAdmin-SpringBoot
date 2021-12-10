@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AddressRepository extends JpaRepository<Address, Integer> {
 
 //    List<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber, Pageable pageable);
-    Page<Address> findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(String city, String raion, String street, String houseNumber, Pageable pageable);
+    Page<Address> findByCityStartingWithIgnoreCaseOrRaionStartingWithIgnoreCaseOrStreetStartingWithIgnoreCaseOrHouseNumberStartingWithIgnoreCase(String city, String raion, String street, String houseNumber, Pageable pageable);
 
     Address findAllByAddressid(Integer id);
 //    Page<Address> findAll(Pageable pageable);

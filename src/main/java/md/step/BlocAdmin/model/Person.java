@@ -9,10 +9,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(	name = "users",
+@Table(	name = "persons",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email"),
+//                @UniqueConstraint(columnNames = "email"),
                 @UniqueConstraint(columnNames = "idnp")
         })
 public class Person {
@@ -34,8 +34,8 @@ public class Person {
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(	name = "person_roles",
+            joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 

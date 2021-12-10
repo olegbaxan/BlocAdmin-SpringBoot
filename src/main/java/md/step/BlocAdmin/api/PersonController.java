@@ -1,11 +1,8 @@
 package md.step.BlocAdmin.api;
 
 import md.step.BlocAdmin.exception.PersonNotFoundException;
-import md.step.BlocAdmin.model.ERole;
-import md.step.BlocAdmin.model.Person;
-import md.step.BlocAdmin.model.Role;
-import md.step.BlocAdmin.repository.PersonRepository;
-import md.step.BlocAdmin.repository.RoleRepository;
+import md.step.BlocAdmin.model.*;
+import md.step.BlocAdmin.repository.*;
 import md.step.BlocAdmin.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,12 +26,23 @@ public class PersonController {
     private PersonRepository personRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private MetersRepository metersRepository;
+    @Autowired
+    private FlatsRepository flatsRepository;
+    @Autowired
+    private PaymentsRepository paymentsRepository;
 
 
     @Autowired
-    public PersonController(PersonService personService,RoleRepository roleRepository) {
+    public PersonController(PersonService personService,RoleRepository roleRepository,PaymentsRepository paymentsRepository,
+                            FlatsRepository flatsRepository,MetersRepository metersRepository) {
         this.personService = personService;
         this.roleRepository=roleRepository;
+        this.paymentsRepository=paymentsRepository;
+        this.metersRepository=metersRepository;
+        this.flatsRepository=flatsRepository;
+
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
@@ -53,7 +61,7 @@ public class PersonController {
                 pagePersons = personRepository.findAllByRoles(personRole,paging);
 //                pagePersons = personRepository.findAll(paging);
             } else {
-                pagePersons = personRepository.findAllByRolesAndNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(personRole,title, title, title, title,title,title, paging);
+                pagePersons = personRepository.findAllByRolesAndNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrIdnpStartingWithIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneStartingWithOrMobileStartingWith(personRole,title, title, title, title,title,title, paging);
 //                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
             }
 
@@ -163,11 +171,26 @@ public class PersonController {
         Person updatePerson = personService.updatePerson(person);
         return new ResponseEntity<>(updatePerson, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable("id") Integer id) throws PersonNotFoundException {
-        personService.deletePerson(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            //Check person flat, meter,payments, role==ROLE_USER
+            Person person=personRepository.findAllByPersonid(id);
+            List<Flats> flats=flatsRepository.findFlatsByPerson(person);
+            List<Meters> meters=metersRepository.findAllByPerson(person);
+            List<Payments> payments=paymentsRepository.findAllByPerson(person);
+
+            if (flats.size()>0 || meters.size()>0 || payments.size()>0){
+                throw new Exception("Person cannot be deleted");
+            }
+
+            personService.deletePerson(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/all")

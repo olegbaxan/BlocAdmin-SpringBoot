@@ -54,8 +54,7 @@ public class BuildingsController {
             if (title == null) {
                 pageBuildings = buildingsRepository.findAll(paging);
             } else {
-                pageBuildings = buildingsRepository.findAll(paging);
-//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
+                pageBuildings = buildingsRepository.findAllByAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title,title,title,  paging);
 
             }
 
@@ -81,7 +80,6 @@ public class BuildingsController {
     @GetMapping("/{id}")
     public ResponseEntity<Buildings> getBuildingById(@PathVariable("id") Integer id) throws BuildingsNotFoundException {
         Buildings building = buidingsService.findBuildingById(id);
-        System.out.println("Address = "+building.getAddress());
         return new ResponseEntity<>(building, HttpStatus.OK);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))

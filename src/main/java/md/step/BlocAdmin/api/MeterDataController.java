@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,15 +51,13 @@ public class MeterDataController {
     ) {
         try {
             List<MeterData> meterData = new ArrayList<MeterData>();
-            Pageable paging = PageRequest.of(page, size);
+            Pageable paging = PageRequest.of(page, size, Sort.by("meterdataid").descending());
 
             Page<MeterData> pageMeterData;
             if (title == null) {
                 pageMeterData = meterDataRepository.findAll(paging);
             } else {
-                pageMeterData = meterDataRepository.findAll(paging);
-//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
-
+                pageMeterData = meterDataRepository.findDistinctByMeter_SerialContainingIgnoreCaseOrMeter_Supplier_SupplierNameContainingIgnoreCaseOrMeter_Person_NameContainingIgnoreCaseOrMeter_Person_SurnameContainingIgnoreCaseOrMeter_Building_Address_CityStartingWithIgnoreCaseOrMeter_Building_Address_RaionStartingWithIgnoreCaseOrMeter_Building_Address_StreetStartingWithIgnoreCase(title,title,title,title,title,title,title,paging);
             }
 
             meterData = pageMeterData.getContent();
@@ -133,7 +132,7 @@ public class MeterDataController {
     @GetMapping("invoices/{name}")
     public ResponseEntity<List<Invoices>> getInvoicesBySupplier(@PathVariable("name") String supplierName) {
         List<Invoices> invoices = meterDataService.findAllInvoicesBySupplier(supplierName);
-        System.out.println("Invoices" + invoices.get(0).getInvoiceNumber());
+        System.out.println("Invoices" + invoices);
         return ResponseEntity.ok(invoices);
     }
 
@@ -180,6 +179,7 @@ public class MeterDataController {
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping("addbulk")
     public ResponseEntity<List<MeterData>> addBulkMeterData(@RequestBody List<MeterData> meterData) {
+        System.out.println("MeterDataLength = "+meterData.size());
         for (int i = 0; i < meterData.size(); i++) {
             Meters meter = new Meters();
             meter = metersRepository.findAllByMeterid(meterData.get(i).getMeter().getMeterId());
@@ -188,14 +188,13 @@ public class MeterDataController {
             if (meterData.get(i).getStatus() != null) {
                 Status status = statusRepository.findAllById(meterData.get(i).getStatus().getId());
                 meterData.get(i).setStatus(status);
-                meterData.get(i).setMeterValue(meterData.get(i).getCurrentValue() - meterData.get(i).getPreviousValue());
             } else {
-                Status status = statusRepository.findAllById(1);
+                Status status = statusRepository.findByName(EStatus.STATUS_CLOSED);
                 meterData.get(i).setStatus(status);
-                meterData.get(i).setMeterValue(meterData.get(i).getCurrentValue() - meterData.get(i).getPreviousValue());
             }
 
-
+            meterData.get(i).setMeterValue(meterData.get(i).getCurrentValue() - meterData.get(i).getPreviousValue());
+            System.out.println("MeterDataMeter = "+meterData.get(i).getMeter().getSerial());
             meterDataService.addMeterData(meterData.get(i));
         }
         return new ResponseEntity<>(meterData, HttpStatus.OK);
@@ -207,7 +206,7 @@ public class MeterDataController {
         meter = metersRepository.findAllByMeterid(meterData.getMeter().getMeterId());
         meterData.setMeter(meter);
         meterData.setMeterValue(meterData.getCurrentValue() - meterData.getPreviousValue());
-
+        System.out.println("MeterDataUpdate = "+meterData);
         MeterData updateMeterData = meterDataService.updateMeterData(meterData);
         return new ResponseEntity<>(updateMeterData, HttpStatus.OK);
     }

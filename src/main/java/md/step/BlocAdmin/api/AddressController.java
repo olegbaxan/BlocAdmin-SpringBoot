@@ -32,11 +32,6 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    //    @GetMapping()
-//    public ResponseEntity<List<Address>> getAllAddresses () {
-//        List<Address> address = addressService.findAllAddresses();
-//        return new ResponseEntity<>(address, HttpStatus.OK);
-//    }
     @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllAddresses(
@@ -55,7 +50,7 @@ public class AddressController {
                 pageAddresses = addressRepository.findAll(paging);
                 System.out.println("pageAddress = " + pageAddresses);
             } else {
-                pageAddresses = addressRepository.findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(title, title, title, title, paging);
+                pageAddresses = addressRepository.findByCityStartingWithIgnoreCaseOrRaionStartingWithIgnoreCaseOrStreetStartingWithIgnoreCaseOrHouseNumberStartingWithIgnoreCase(title, title, title, title, paging);
                 System.out.println("pageAddress2 = " + pageAddresses);
             }
 

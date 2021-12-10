@@ -52,8 +52,7 @@ public class SuppliersController {
             if (title == null) {
                 pageSuppliers = suppliersRepository.findAll(paging);
             } else {
-                pageSuppliers = suppliersRepository.findAll(paging);
-//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
+                pageSuppliers = suppliersRepository.findDistinctBySupplierNameContainingIgnoreCaseOrAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title, title, title, title,paging);
 
             }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -43,17 +44,21 @@ public final FlatsService flatsService;
 
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
 
     public MetersController(MetersService metersService, SuppliersService suppliersService, FlatsService flatsService, MeterDestRepository meterDestRepository,
-                            TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository,BuildingsRepository buildingsRepository) {
+                            TypeOfMeterInvoiceRepository typeOfMeterInvoiceRepository,BuildingsRepository buildingsRepository,
+                            RoleRepository roleRepository) {
         this.metersService = metersService;
         this.suppliersService = suppliersService;
         this.flatsService = flatsService;
         this.meterDestRepository = meterDestRepository;
         this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
         this.buildingsRepository=buildingsRepository;
+        this.roleRepository=roleRepository;
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
@@ -70,9 +75,7 @@ public final FlatsService flatsService;
             if (title == null) {
                 pageMeters = metersRepository.findAll(paging);
             } else {
-                pageMeters = metersRepository.findAll(paging);
-//                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
-
+                pageMeters = metersRepository.findDistinctBySerialContainingIgnoreCaseOrSupplier_SupplierNameContainingIgnoreCaseOrPerson_NameContainingIgnoreCaseOrPerson_SurnameContainingIgnoreCaseOrBuilding_Address_CityStartingWithIgnoreCaseOrBuilding_Address_RaionStartingWithIgnoreCaseOrBuilding_Address_StreetStartingWithIgnoreCase(title,title,title,title,title,title,title,paging);
             }
 
             meters = pageMeters.getContent();
@@ -121,7 +124,12 @@ public final FlatsService flatsService;
     @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = metersService.findAllPerson();
+        persons = persons.stream().filter(p -> p.getRoles().contains(roleRepository.findByName(ERole.ROLE_USER).get())).collect(Collectors.toList());
         return ResponseEntity.ok(persons);
+    }
+    @GetMapping("serial/{serial}")
+    public Boolean checkSerial(@PathVariable("serial") String serial) {
+        return this.metersService.checkSerialExist(serial);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("buildingflats/{id}")
@@ -151,12 +159,25 @@ public final FlatsService flatsService;
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("typeofmeterinvoice")
     public ResponseEntity<List<TypeOfMeterInvoice>> getTypeMeterAndInvoice() {
-        List<TypeOfMeterInvoice> typeOfMeterAndInvoices = metersService.findAllTypeOfMeterInvoice();
-        return ResponseEntity.ok(typeOfMeterAndInvoices);
+        List<TypeOfMeterInvoice> typeOfMeterInvoices = metersService.findAllTypeOfMeterInvoice();
+        List<TypeOfMeterInvoice> typeOfMI = null;
+        for (int i=0;i<typeOfMeterInvoices.size();i++){
+            System.out.println("Type of meter="+typeOfMeterInvoices.get(i).getName().toString());
+            if (typeOfMeterInvoices.get(i).getName().toString()=="TYPE_PERSON"){
+               typeOfMeterInvoices.remove(i);
+            }
+        }
+        return ResponseEntity.ok(typeOfMeterInvoices);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Meters> getMeterById(@PathVariable("id") Integer id) throws MetersNotFoundException {
         Meters meter = metersService.findMeterById(id);
+        return new ResponseEntity<>(meter, HttpStatus.OK);
+    }
+
+    @GetMapping("buildingmeters/{id}")
+    public ResponseEntity<List<Meters>> getMeterByBuilding(@PathVariable("id") Integer id) throws MetersNotFoundException {
+        List<Meters> meter = metersRepository.findMetersByBuilding_Buildingid(id);
         return new ResponseEntity<>(meter, HttpStatus.OK);
     }
     @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))

@@ -70,6 +70,7 @@ public class FileController {
 
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+            System.out.println("Exception = "+e);
             Map<String, Object> response = new HashMap<>();
             response.put("fileDB", "Unknown");
             response.put("message", message);

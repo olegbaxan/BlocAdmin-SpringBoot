@@ -23,6 +23,10 @@ public class PersonServiceImpl implements IPersonService {
     public Optional findPersonByResetPasswordToken(String resetToken) {
         return personRepository.findPersonByResetPasswordToken(resetToken);
     }
+    @Override
+    public Optional findPersonByUsername(String username) {
+        return personRepository.findByUsername(username);
+    }
 
     @Override
     public void save(Person person) {
