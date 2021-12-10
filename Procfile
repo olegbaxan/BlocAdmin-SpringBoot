@@ -1,1 +1,1 @@
-web: java md.step.BlocAdmin.BlocAdminApplication
+web: java -jar md.step.BlocAdmin.BlocAdminApplication
