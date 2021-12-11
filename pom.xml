@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>BlocAdmin</name>
 	<description>Project for course finalization</description>
-	<packaging>war</packaging>
+<!--	<packaging>war</packaging>-->
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -94,7 +94,6 @@
 		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
-
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
