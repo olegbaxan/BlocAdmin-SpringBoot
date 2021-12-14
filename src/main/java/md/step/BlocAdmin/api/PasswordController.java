@@ -36,6 +36,8 @@ public class PasswordController {
     @PostMapping("/forgot")
     public ResponseEntity<?> processForgotPasswordForm(@Valid @RequestBody String personEmail, HttpServletRequest request) {
 
+        //String baseUrl = String.format("%s://%s:%d/tasks/",request.getScheme(),  request.getServerName(), request.getServerPort());
+
         // Lookup user in database by e-mail
         Optional<Person> optional = personService.findPersonByEmail(personEmail);
         String message;
