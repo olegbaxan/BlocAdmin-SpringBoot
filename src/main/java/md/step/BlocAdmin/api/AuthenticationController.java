@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(maxAge = 3600, allowCredentials = "true")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     @Autowired
