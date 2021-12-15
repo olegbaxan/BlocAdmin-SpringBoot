@@ -57,7 +57,7 @@ public class PasswordController {
             passwordResetEmail.setFrom("oleg.baxan.test@gmail.com");
             passwordResetEmail.setTo(person.getEmail());
             passwordResetEmail.setSubject("Password Reset Request");
-            passwordResetEmail.setText("To reset your password, click the link below:\nhttps://blocadmin-angularui.herokuapp.com"+request.getRequestURI()+"?token=" + person.getResetPasswordToken());
+            passwordResetEmail.setText("To reset your password, click the link below:\nhttps://blocadmin-angularui.herokuapp.com/password/forgot/reset?token=" + person.getResetPasswordToken());
             System.out.println("Email text = "+ passwordResetEmail.getText());
             emailService.sendEmail(passwordResetEmail);
 
