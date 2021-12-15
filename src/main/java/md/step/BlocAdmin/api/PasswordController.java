@@ -56,14 +56,14 @@ public class PasswordController {
             personService.save(person);
 
             String appUrl = request.getScheme() + "://" + request.getServerName();
-            System.out.println("Request URI = "+request.getRequestURI());
-            System.out.println("Request Path URI = "+request.getPathInfo());
+            System.out.println("Request Path URI = "+request.getPathTranslated();
+            System.out.println("Request Context Path= "+request.getContextPath();
             // Email message
             SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
             passwordResetEmail.setFrom("oleg.baxan.test@gmail.com");
             passwordResetEmail.setTo(person.getEmail());
             passwordResetEmail.setSubject("Password Reset Request");
-            passwordResetEmail.setText("To reset your password, click the link below:\n" +appUrl+":4200/password/forgot/reset?token=" + person.getResetPasswordToken());
+            passwordResetEmail.setText("To reset your password, click the link below:\n" +appUrl+request.getRequestURI()+"?token=" + person.getResetPasswordToken());
             System.out.println("Email text = "+ passwordResetEmail.getText());
             emailService.sendEmail(passwordResetEmail);
 
