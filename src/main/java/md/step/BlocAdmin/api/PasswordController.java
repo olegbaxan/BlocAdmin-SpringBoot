@@ -51,13 +51,13 @@ public class PasswordController {
             System.out.println("Person = "+person.getUsername());
             System.out.println("Person email = "+person.getEmail());
             person.setResetPasswordToken(UUID.randomUUID().toString());
-            
+
             // Email message
             SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
             passwordResetEmail.setFrom("oleg.baxan.test@gmail.com");
             passwordResetEmail.setTo(person.getEmail());
             passwordResetEmail.setSubject("Password Reset Request");
-            passwordResetEmail.setText("To reset your password, click the link below:\nhttps://blocadmin-angularui.herokuapp.com/"+request.getRequestURI()+"?token=" + person.getResetPasswordToken());
+            passwordResetEmail.setText("To reset your password, click the link below:\nhttps://blocadmin-angularui.herokuapp.com"+request.getRequestURI()+"?token=" + person.getResetPasswordToken());
             System.out.println("Email text = "+ passwordResetEmail.getText());
             emailService.sendEmail(passwordResetEmail);
 
