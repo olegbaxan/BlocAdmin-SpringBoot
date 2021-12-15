@@ -56,8 +56,8 @@ public class PasswordController {
             personService.save(person);
 
             String appUrl = request.getScheme() + "://" + request.getServerName();
-            System.out.println("Request Path URI = "+request.getPathTranslated();
-            System.out.println("Request Context Path= "+request.getContextPath();
+            System.out.println("Request Path URI = "+request.getPathTranslated());
+            System.out.println("Request Context Path= "+request.getContextPath());
             // Email message
             SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
             passwordResetEmail.setFrom("oleg.baxan.test@gmail.com");
