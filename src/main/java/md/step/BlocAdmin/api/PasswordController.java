@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -54,6 +55,12 @@ public class PasswordController {
 
             // Save token to database
             personService.save(person);
+            String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
+                    .replacePath(null)
+                    .build()
+                    .toUriString();
+
+            System.out.println("BaseURL = "+baseUrl);
 
             String appUrl = request.getScheme() + "://" + request.getServerName();
             System.out.println("Request Path URI = "+request.getPathTranslated());
