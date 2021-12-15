@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/suppliers")
 public class SuppliersController {

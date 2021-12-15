@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
 //@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping("/api/v1/files")

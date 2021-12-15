@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/password")
 public class PasswordController {

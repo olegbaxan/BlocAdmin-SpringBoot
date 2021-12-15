@@ -53,8 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().disable()
-                .csrf().disable()
+        http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/v1/auth/**").permitAll()
@@ -65,16 +64,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-//    @Autowired
-//    private DynamicCorsConfig dynamicCorsConfig;
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        dynamicCorsConfig.setAllowedMethods(Arrays.asList("OPTIONS", "GET", "POST", "PUT", "DELETE"));
-//        dynamicCorsConfig.setAllowedOrigins(Arrays.asList("*"));
-//        dynamicCorsConfig.setAllowedHeaders(Arrays.asList("*"));
-//        dynamicCorsConfig.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/", dynamicCorsConfig);
-//        return source;
-//    }
+
 }
