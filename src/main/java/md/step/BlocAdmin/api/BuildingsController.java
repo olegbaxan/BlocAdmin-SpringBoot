@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
 @RestController
 @RequestMapping("/api/v1/buildings")
 public class BuildingsController {

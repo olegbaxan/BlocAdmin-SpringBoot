@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
 @RestController
 @RequestMapping("/api/v1/invoices")
 public class InvoicesController {

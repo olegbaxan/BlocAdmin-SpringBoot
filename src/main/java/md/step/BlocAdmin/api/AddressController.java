@@ -20,6 +20,7 @@ import java.util.Map;
 
 
 @RestController
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
 @RequestMapping("/api/v1/address")
 public class AddressController {
     private final AddressService addressService;

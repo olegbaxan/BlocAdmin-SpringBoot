@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
 //@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping("/api/v1/files")

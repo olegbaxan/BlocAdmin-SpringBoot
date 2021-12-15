@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "*")
 @RestController
 @RequestMapping("/api/v1/password")
 public class PasswordController {
