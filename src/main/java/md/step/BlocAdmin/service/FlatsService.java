@@ -52,24 +52,28 @@ public class FlatsService {
     public List<Buildings> findAllBuildings() {
         return buildingsRepository.findAll();
     }
+
     public List<Meters> findAllMeters() {
         return metersRepository.findAll();
     }
+
     public List<Person> findAllPerson() {
         return personRepository.findAll();
     }
 
     public Buildings getBuildingByFlatId(Integer id) {
-        Optional<Flats> flat= flatsRepository.findById(id);
+        Optional<Flats> flat = flatsRepository.findById(id);
         return flat.get().getBuilding();
     }
+
     public Set<Meters> getMetersByFlatId(Integer id) {
-        Optional<Flats> flat= flatsRepository.findById(id);
+        Optional<Flats> flat = flatsRepository.findById(id);
         return flat.get().getMeters();
     }
+
     public Set<Person> getPersonsByFlatId(Integer id) {
-        Optional<Flats> flats= flatsRepository.findById(id);
-        Set<Person> personList =flats.get().getPerson();
+        Optional<Flats> flats = flatsRepository.findById(id);
+        Set<Person> personList = flats.get().getPerson();
         return personList;
     }
 
@@ -82,8 +86,9 @@ public class FlatsService {
         return flatsRepository.findById(id)
                 .orElseThrow(() -> new FlatsNotFoundException(id));
     }
+
     public List<Flats> findFlatsByPersonId(Integer id) throws FlatsNotFoundException {
-        Person person= personRepository.findAllByPersonid(id);
+        Person person = personRepository.findAllByPersonid(id);
         return flatsRepository.findFlatsByPerson(person);
     }
 

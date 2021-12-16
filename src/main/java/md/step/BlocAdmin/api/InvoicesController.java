@@ -133,10 +133,7 @@ public class InvoicesController {
         Map<String, Object> response = new HashMap<>();
         if (name.length() > 0) {
             FileDB invoiceFile = invoicesService.getFileByName(name);
-            System.out.println("Invoicefile=" + invoiceFile);
-            System.out.println("Invoicename=" + name);
-//        }
-//        if (invoiceFile.getName().length()>0) {
+
             List<ResponseFile> files = fileDBRepository.findAll().stream()
                     .filter(c -> c.getName().equals(invoiceFile.getName()))
                     .map(dbFile -> {
@@ -152,7 +149,6 @@ public class InvoicesController {
                                 dbFile.getType(),
                                 dbFile.getData().length);
                     }).collect(Collectors.toList());
-            System.out.println("FileInfo=" + files);
             response.put("invoiceFile", invoiceFile);
             response.put("fileInfo", files);
         }
@@ -181,7 +177,7 @@ public class InvoicesController {
     @GetMapping("personinvoices/{id}")
     public ResponseEntity<List<Invoices>> getInvoiceByPersonId(@PathVariable("id") Integer id) throws InvoicesNotFoundException {
         Person person = personRepository.findAllByPersonid(id);
-        System.out.println("Person Invoice =" + person);
+
         List<Invoices> invoice = invoicesRepository.findFirst10InvoicesByMeter_PersonOrMeter_Flat_PersonOrderByEmittedDateDesc(person, person);
 
         return new ResponseEntity<>(invoice, HttpStatus.OK);
@@ -219,7 +215,6 @@ public class InvoicesController {
                     suppInvoice.add(invoice.get(i));
                 }
             }
-            System.out.println("Supp inv = " + suppInvoice);
         }
         return new ResponseEntity<>(suppInvoice, HttpStatus.OK);
     }
@@ -236,7 +231,6 @@ public class InvoicesController {
 
         //Get the type of Invoice:1-TYPE_BUILDING & 2- TYPE_LADDER, 3-TYPE_FLATS, 4-TYPE_PERSON
         Integer type = invoice.getTypeOfMeterInvoice().getId();
-        System.out.println("InvoiceType = " + type);
         TypeOfMeterInvoice typeOfMeterInvoice = typeOfMeterInvoiceRepository.findAllById(type);
         invoice.setTypeOfMeterInvoice(typeOfMeterInvoice);
 
@@ -268,19 +262,16 @@ public class InvoicesController {
             //count flats from selected buildings
             for (int i = 0; i < arrayBuild.size(); i++) {
                 totalFlats = totalFlats + (flatsRepository.countFlatsByBuilding_Buildingid(arrayBuild.get(i).getBuildingid()));
-                System.out.println("Total Flats=" + totalFlats);
+
                 List<Flats> buildingFlats = flatsRepository.findFlatsByBuilding_Buildingid(arrayBuild.get(i).getBuildingid());
                 for (int j = 0; j < buildingFlats.size(); j++) {
                     invoiceFlats.add(buildingFlats.get(j));
-                    System.out.println("Total Invoice Flats=" + buildingFlats.get(j));
                     //Count persons that lives in flats
                     totalPersons = totalPersons + buildingFlats.get(j).getNumberOfPerson();
                     List<Person> flatPerson = new ArrayList<>(buildingFlats.get(j).getPerson());
-                    System.out.println("Total Person = " + totalPersons);
 
                     for (int p = 0; p < flatPerson.size(); p++) {
                         flatPersons.add(flatPerson.get(p));
-                        System.out.println("Flat Person = " + flatPerson.get(p));
                     }
                 }
             }
@@ -301,7 +292,7 @@ public class InvoicesController {
                     flatInvoice.setInvoiceNumber(invoice.getInvoiceNumber().concat(String.valueOf("/" + LocalDate.now().getYear()).concat("/" + LocalDate.now().getDayOfMonth()).concat("/" + flat.getFlatNumber()).concat(String.valueOf("/" + flat.getFlatid()))));
                     flatInvoice.setTypeOfMeterInvoice(invoice.getTypeOfMeterInvoice());
                     flatInvoice.setBuildings(invoice.getBuildings());
-                    flatInvoice.setStatus(statusRepository.findByName(EStatus.STATUS_SENDINVOICE));//PAYED
+                    flatInvoice.setStatus(statusRepository.findByName(EStatus.STATUS_PAYED));//PAYED
                     flatInvoice.setEmittedDate(invoice.getEmittedDate());
                     flatInvoice.setUnitPrice(invoice.getUnitPrice());
                     flatInvoice.setSupplier(invoice.getSupplier());
@@ -380,7 +371,6 @@ public class InvoicesController {
         //Get the type of Invoice:1-TYPE_BUILDING & 2- TYPE_LADDER, 3-TYPE_FLATS, 4-TYPE_PERSON
         Integer type = invoice.getTypeOfMeterInvoice().getId();
         TypeOfMeterInvoice typeOfMeterInvoice = typeOfMeterInvoiceRepository.findAllById(type);
-        System.out.println("Status = " + invoice.getStatus().getName() + " ,type = " + type);
         invoice.setTypeOfMeterInvoice(typeOfMeterInvoice);
 
 
@@ -407,19 +397,15 @@ public class InvoicesController {
             //count flats from selected buildings
             for (int i = 0; i < arrayBuild.size(); i++) {
                 totalFlats = totalFlats + (flatsRepository.countFlatsByBuilding_Buildingid(arrayBuild.get(i).getBuildingid()));
-                System.out.println("Total Flats=" + totalFlats);
                 List<Flats> buildingFlats = flatsRepository.findFlatsByBuilding_Buildingid(arrayBuild.get(i).getBuildingid());
                 for (int j = 0; j < buildingFlats.size(); j++) {
                     invoiceFlats.add(buildingFlats.get(j));
-                    System.out.println("Total Invoice Flats=" + buildingFlats.get(j));
                     //Count persons that lives in flats
                     totalPersons = totalPersons + buildingFlats.get(j).getNumberOfPerson();
                     List<Person> flatPerson = new ArrayList<>(buildingFlats.get(j).getPerson());
-                    System.out.println("Total Person = " + totalPersons);
 
                     for (int p = 0; p < flatPerson.size(); p++) {
                         flatPersons.add(flatPerson.get(p));
-                        System.out.println("Flat Person = " + flatPerson.get(p));
                     }
                 }
             }
@@ -444,7 +430,6 @@ public class InvoicesController {
             }
 
         }
-        System.out.println("Update Invoice = " + invoice);
         invoicesService.updateInvoice(invoice);
         return new ResponseEntity<>(invoice, HttpStatus.OK);
 
@@ -459,7 +444,6 @@ public class InvoicesController {
         List<Buildings> arrayBuild = new ArrayList<>(invoice.getBuildings());
         String invoiceName = invoice.getInvoiceNumber().concat("/");
         List<Invoices> allChildInvoices = invoicesRepository.findInvoicesByInvoiceNumberStartingWith(invoiceName);
-        System.out.println("allChildInvoices = " + allChildInvoices);
 
         if (allChildInvoices.size() > 0) {
             for (int i = 0; i < allChildInvoices.size(); i++) {
@@ -471,19 +455,16 @@ public class InvoicesController {
                     if (allChildInvoices.get(i).getBuildings().size() > 0) {
                         for (int b = 0; b < arrayBuild.size(); b++) {
                             List<Flats> buildingFlats = flatsRepository.findFlatsByBuilding_Buildingid(arrayBuild.get(b).getBuildingid());
-                            System.out.println("buildingFlats = " + buildingFlats);
                             for (int j = 0; j < buildingFlats.size(); j++) {
                                 invoiceFlats.add(buildingFlats.get(j));
                             }
                         }
                     }
                 }
-                System.out.println("Invoice to delete = " + allChildInvoices.get(i).getInvoiceNumber());
                 invoicesService.deleteInvoice(allChildInvoices.get(i).getInvoiceId());
             }
             if (invoiceFlats.size() > 0) {
                 invoiceFlats.forEach(flat -> {
-                    System.out.println("Flat = Flat = " + flat.getFlatNumber() + ", ID: " + flat.getFlatid());
                     flat.setWallet(flat.getWallet() + (invoice.getUnitPrice() * flat.getNumberOfPerson()));
                     flatsService.updateFlat(flat);
                 });

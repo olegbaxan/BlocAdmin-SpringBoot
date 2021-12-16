@@ -33,8 +33,8 @@ public class InvoicesService {
         this.suppliersRepository = suppliersRepository;
         this.metersRepository = metersRepository;
         this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
-        this.fileDBRepository=fileDBRepository;
-        this.buildingsRepository=buildingsRepository;
+        this.fileDBRepository = fileDBRepository;
+        this.buildingsRepository = buildingsRepository;
     }
 
     public Invoices addInvoice(Invoices invoice) {
@@ -44,8 +44,9 @@ public class InvoicesService {
     public List<Invoices> findAll() {
         return invoicesRepository.findAll();
     }
-    public List<Invoices> getInvoicesByFlatId(Integer flatId,Status status) {
-        return invoicesRepository.findInvoicesByMeter_Flat_FlatidAndStatus(flatId,status);
+
+    public List<Invoices> getInvoicesByFlatId(Integer flatId, Status status) {
+        return invoicesRepository.findInvoicesByMeter_Flat_FlatidAndStatus(flatId, status);
     }
 
     public List<Suppliers> findAllSuppliers() {
@@ -55,9 +56,11 @@ public class InvoicesService {
     public List<Meters> findAllMeters() {
         return metersRepository.findAll();
     }
+
     public List<Buildings> findAllBuildings() {
         return buildingsRepository.findAll();
     }
+
     public List<TypeOfMeterInvoice> findAllTyepOfMeterAndInvoice() {
         return typeOfMeterInvoiceRepository.findAll();
     }
@@ -66,6 +69,7 @@ public class InvoicesService {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
         return invoice.get().getSupplier();
     }
+
     public Set<Buildings> getBuildingsByInvoiceId(Integer id) {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
         return invoice.get().getBuildings();
@@ -75,13 +79,10 @@ public class InvoicesService {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
         return invoice.get().getMeter();
     }
-//    public FileDB getInvoiceFileByInvoiceId(Integer id) {
-//        Optional<Invoices> invoice = invoicesRepository.findById(id);
-//        return invoice.get().getInvoiceFileId();
-//    }
+
     public FileDB getFileByName(String id) {
-    return fileDBRepository.findAllByName(id);
-}
+        return fileDBRepository.findAllByName(id);
+    }
 
     public TypeOfMeterInvoice getTypeOfMeterAndInvoiceByInvoiceId(Integer id) {
         Optional<Invoices> invoice = invoicesRepository.findById(id);
@@ -111,7 +112,6 @@ public class InvoicesService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.invoicesRepository.findAll(pageable);
     }
-
 
 
 }

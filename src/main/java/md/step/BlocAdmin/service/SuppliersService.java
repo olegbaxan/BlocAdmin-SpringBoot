@@ -43,8 +43,8 @@ public class SuppliersService {
     }
 
     public Address getAddressBySuppliersId(Integer id) {
-        Optional<Suppliers> supplier= suppliersRepository.findById(id);
-        Address address =supplier.get().getAddress();
+        Optional<Suppliers> supplier = suppliersRepository.findById(id);
+        Address address = supplier.get().getAddress();
         return address;
     }
 

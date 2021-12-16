@@ -17,9 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/suppliers")
 public class SuppliersController {
@@ -33,11 +36,12 @@ public class SuppliersController {
 
 
     @Autowired
-    public SuppliersController(SuppliersService suppliersService,AddressService addressService) {
+    public SuppliersController(SuppliersService suppliersService, AddressService addressService) {
         this.suppliersService = suppliersService;
-        this.addressService=addressService;
+        this.addressService = addressService;
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllSuppliers(
             @RequestParam(required = false) String title,
@@ -52,7 +56,7 @@ public class SuppliersController {
             if (title == null) {
                 pageSuppliers = suppliersRepository.findAll(paging);
             } else {
-                pageSuppliers = suppliersRepository.findDistinctBySupplierNameContainingIgnoreCaseOrAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title, title, title, title,paging);
+                pageSuppliers = suppliersRepository.findDistinctBySupplierNameContainingIgnoreCaseOrAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title, title, title, title, paging);
 
             }
 
@@ -63,47 +67,50 @@ public class SuppliersController {
             response.put("totalItems", pageSuppliers.getTotalElements());
             response.put("totalPages", pageSuppliers.getTotalPages());
 
-            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("address")
     public ResponseEntity<List<Address>> getAddress() {
         List<Address> address = suppliersService.findAllAddresses();
         return ResponseEntity.ok(address);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Suppliers> getSupplierById(@PathVariable("id") Integer id) throws SuppliersNotFoundException {
         Suppliers supplier = suppliersService.findSupplierById(id);
         return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Suppliers> addSuppliers(@RequestBody Suppliers supplier) {
         Address address = new Address();
-        System.out.println(supplier.getAddress());
-        address=addressRepository.findAllByAddressid(supplier.getAddress().getAddressid());
+        address = addressRepository.findAllByAddressid(supplier.getAddress().getAddressid());
 
         supplier.setAddress(address);
         suppliersRepository.save(supplier);
 
         return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Suppliers> updateSupplier(@RequestBody Suppliers supplier) {
         Address address = new Address();
-        address=addressRepository.findAllByAddressid(supplier.getAddress().getAddressid());
+        address = addressRepository.findAllByAddressid(supplier.getAddress().getAddressid());
 
         supplier.setAddress(address);
         Suppliers updateSupplier = suppliersService.updateSupplier(supplier);
         return new ResponseEntity<>(updateSupplier, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSupplier(@PathVariable("id") Integer id) throws SuppliersNotFoundException {
         suppliersService.deleteSupplier(id);

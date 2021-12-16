@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 //@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping("/api/v1/files")
@@ -29,9 +29,9 @@ public class FileController {
     @Autowired
     private FileDBRepository fileDBRepository;
 
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping("/upload")
-    public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
 //    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
         try {
@@ -41,24 +41,23 @@ public class FileController {
 
             //suplimentar am inclus ID-ul fisierului salvat mai sus
             FileDB fileDB = fileDBRepository.findAllByName(file.getOriginalFilename());
-            System.out.println("fileId="+fileDB.getFileid());
             //??? Cum includ a ID in ResponceEntity si respectiv cum il citesc in FrontEnd???
 
             List<ResponseFile> files = storageService.getAllFiles()
                     .filter(c -> c.getName().equals(file.getOriginalFilename()))
                     .map(dbFile -> {
-                String fileDownloadUri = ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/api/v1/files/")
-                        .path(dbFile.getFileid())
-                        .toUriString();
+                        String fileDownloadUri = ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/api/v1/files/")
+                                .path(dbFile.getFileid())
+                                .toUriString();
 
-                return new ResponseFile(
-                        dbFile.getName(),
-                        fileDownloadUri,
-                        dbFile.getType(),
-                        dbFile.getData().length);
-            }).collect(Collectors.toList());
+                        return new ResponseFile(
+                                dbFile.getName(),
+                                fileDownloadUri,
+                                dbFile.getType(),
+                                dbFile.getData().length);
+                    }).collect(Collectors.toList());
 
 
             Map<String, Object> response = new HashMap<>();
@@ -70,7 +69,6 @@ public class FileController {
 
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-            System.out.println("Exception = "+e);
             Map<String, Object> response = new HashMap<>();
             response.put("fileDB", "Unknown");
             response.put("message", message);
@@ -101,7 +99,6 @@ public class FileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-        System.out.println("ID= "+id);
         FileDB fileDB = storageService.getFile(id);
 
         return ResponseEntity.ok()

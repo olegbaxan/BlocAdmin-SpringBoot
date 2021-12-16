@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/flats")
 public class FlatsController {
@@ -46,9 +46,10 @@ public class FlatsController {
         this.buidingsService = buidingsService;
         this.personService = personService;
         this.metersService = metersService;
-        this.roleRepository=roleRepository;
+        this.roleRepository = roleRepository;
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllFLats(
             @RequestParam(required = false) String title,
@@ -64,7 +65,7 @@ public class FlatsController {
                 pageFlats = flatsRepository.findAll(paging);
             } else {
 //                pageFlats = flatsRepository.findAll(paging);
-                pageFlats = flatsRepository.findAllDistinctFlatsByBuilding_Address_CityStartingWithIgnoreCaseOrBuilding_Address_RaionStartingWithIgnoreCaseOrBuilding_Address_StreetStartingWithIgnoreCaseOrPerson_NameStartingWithIgnoreCaseOrPerson_SurnameStartingWithIgnoreCase( title,title,title,title,title, paging);
+                pageFlats = flatsRepository.findAllDistinctFlatsByBuilding_Address_CityStartingWithIgnoreCaseOrBuilding_Address_RaionStartingWithIgnoreCaseOrBuilding_Address_StreetStartingWithIgnoreCaseOrPerson_NameStartingWithIgnoreCaseOrPerson_SurnameStartingWithIgnoreCase(title, title, title, title, title, paging);
 
             }
 
@@ -80,46 +81,47 @@ public class FlatsController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("available/{id}")
     public ResponseEntity<List<Integer>> getAllAvailableFLatsNumbers(@PathVariable("id") Integer id) {
         try {
             List<Flats> flats = new ArrayList<Flats>();
             List<Integer> availableFlats = new ArrayList<>();
-            Buildings building=new Buildings();
-            if (id>0) {
+            Buildings building = new Buildings();
+            if (id > 0) {
                 building = buildingsRepository.findAllByBuildingid(id);
-                flats=flatsRepository.findFlatsByBuilding(building);
+                flats = flatsRepository.findFlatsByBuilding(building);
             }
-            if (building.getFlats()>0){
-                System.out.println("flatBuilding = "+building.getFlats()+1);
-                for (int i=1;i<building.getFlats()+1;i++){
-                    boolean used=false;
-                    for (int j=0;j<flats.size();j++){
-                        if (i==flats.get(j).getFlatNumber()){
-                            used=true;
+            if (building.getFlats() > 0) {
+                for (int i = 1; i < building.getFlats() + 1; i++) {
+                    boolean used = false;
+                    for (int j = 0; j < flats.size(); j++) {
+                        if (i == flats.get(j).getFlatNumber()) {
+                            used = true;
                             break;
                         }
                     }
-                    if (!used){
-                        System.out.println("available = "+i);
+                    if (!used) {
                         availableFlats.add(i);
                     }
                 }
             }
 
-            return new ResponseEntity<>(availableFlats,HttpStatus.OK);
+            return new ResponseEntity<>(availableFlats, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("buildings")
     public ResponseEntity<List<Buildings>> getBuildings() {
         List<Buildings> buildings = flatsService.findAllBuildings();
         return ResponseEntity.ok(buildings);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("persons")
     public ResponseEntity<List<Person>> getPersons() {
         List<Person> persons = flatsService.findAllPerson();
@@ -128,34 +130,38 @@ public class FlatsController {
 
         return ResponseEntity.ok(persons);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("meters")
     public ResponseEntity<List<Meters>> getMeters() {
         List<Meters> meters = flatsService.findAllMeters();
         return ResponseEntity.ok(meters);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("allnegativewallet")
     public ResponseEntity<List<Flats>> getFlatsNegativeWallet() {
         List<Flats> flats = flatsRepository.findFlatsByWalletLessThan(0.0);//negative Wallet
         return ResponseEntity.ok(flats);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Flats> getFlatById(@PathVariable("id") Integer id) throws FlatsNotFoundException {
         Flats flat = flatsService.findFlatById(id);
         return new ResponseEntity<>(flat, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Flats> addFlat(@RequestBody Flats flat) {
         Buildings building = new Buildings();
-        building=buildingsRepository.findAllByBuildingid(flat.getBuilding().getBuildingid());
+        building = buildingsRepository.findAllByBuildingid(flat.getBuilding().getBuildingid());
         flat.setBuilding(building);
 
         Set<Meters> meters = new HashSet<>();
         Set<Meters> flatMeters = flat.getMeters();
-        if(flatMeters!=null){
+        if (flatMeters != null) {
             flatMeters.forEach(meter -> {
                 Meters meterToAdd = metersRepository.findAllByMeterid(meter.getMeterId());
                 meters.add(meterToAdd);
@@ -176,21 +182,22 @@ public class FlatsController {
 
         return new ResponseEntity<>(flat, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Flats> updateFlat(@RequestBody Flats flat) {
         Buildings building = new Buildings();
-        building=buildingsRepository.findAllByBuildingid(flat.getBuilding().getBuildingid());
+        building = buildingsRepository.findAllByBuildingid(flat.getBuilding().getBuildingid());
         flat.setBuilding(building);
 
         Set<Meters> meters = new HashSet<>();
         Set<Meters> metersId = flat.getMeters();
-        if(metersId!=null){
-        metersId.forEach(meter -> {
-            Meters meterToAdd = metersRepository.findAllByMeterid(meter.getMeterId());
-            meters.add(meterToAdd);
-        });
-        flat.setMeters(meters);
+        if (metersId != null) {
+            metersId.forEach(meter -> {
+                Meters meterToAdd = metersRepository.findAllByMeterid(meter.getMeterId());
+                meters.add(meterToAdd);
+            });
+            flat.setMeters(meters);
         }
 
         Set<Person> persons = new HashSet<>();
@@ -203,7 +210,8 @@ public class FlatsController {
         Flats updateFlat = flatsService.updateFlat(flat);
         return new ResponseEntity<>(updateFlat, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFlat(@PathVariable("id") Integer id) throws FlatsNotFoundException {
         flatsService.deleteFlat(id);

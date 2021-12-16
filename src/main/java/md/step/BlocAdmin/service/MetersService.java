@@ -106,6 +106,7 @@ public class MetersService {
         Optional<Meters> meters = metersRepository.findById(id);
         return meters.get().getFlat();
     }
+
     public List<Flats> getFlatByBuilding(Buildings building) {
         List<Flats> flats = flatsRepository.findFlatsByBuilding(building);
         return flats;

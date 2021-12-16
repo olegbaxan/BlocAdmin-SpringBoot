@@ -80,28 +80,4 @@ public class PersonService {
         return personRepository.existsByIdnp(idnp);
     }
 
-    //Password forgotten
-
-//    public void updateResetPasswordToken(String token, String email) throws PersonNotFoundException {
-//        Person person = personRepository.findByEmail(email);
-//        if (person != null) {
-//            person.setResetPasswordToken(token);
-//            personRepository.save(person);
-//        } else {
-//            throw new PersonNotFoundException(person.getPersonid());
-//        }
-//    }
-//
-//    public Person getByResetPasswordToken(String token) {
-//        return personRepository.findByResetPasswordToken(token);
-//    }
-//
-//    public void updatePassword(Person person, String newPassword) {
-//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//        String encodedPassword = passwordEncoder.encode(newPassword);
-//        person.setPassword(encodedPassword);
-//
-//        person.setResetPasswordToken(null);
-//        personRepository.save(person);
-//    }
 }

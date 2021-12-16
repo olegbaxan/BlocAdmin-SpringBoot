@@ -42,7 +42,7 @@ public class BuidingsService {
     }
 
     public Address getAddressByBuildingsId(Integer id) {
-        Optional<Buildings> building= buildingsRepository.findById(id);
+        Optional<Buildings> building = buildingsRepository.findById(id);
         return building.get().getAddress();
     }
 

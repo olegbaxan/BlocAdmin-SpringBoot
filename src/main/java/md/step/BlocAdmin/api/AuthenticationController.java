@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     @Autowired
@@ -74,6 +74,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new JwtResponse(jwt, refreshToken.getToken(), userDetails.getPersonId(),
                 userDetails.getUsername(), userDetails.getEmail(), roles));
     }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (personRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -110,7 +111,6 @@ public class AuthenticationController {
         if (strRoles == null) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            System.out.println("personRole = "+personRole);
             roles.add(personRole);
         } else {
             strRoles.forEach(role -> {
@@ -134,12 +134,12 @@ public class AuthenticationController {
                 }
             });
         }
-//        System.out.println("Roles = "+roles);
         person.setRoles(roles);
         personRepository.save(person);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();

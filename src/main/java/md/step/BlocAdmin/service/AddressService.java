@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -39,7 +38,7 @@ public class AddressService {
 
     public Address findAddressById(Integer id) throws AddressNotFoundException {
         return addressRepository.findById(id)
-                .orElseThrow(() -> new AddressNotFoundException( id));
+                .orElseThrow(() -> new AddressNotFoundException(id));
     }
 
     public void deleteAddress(Integer id) throws AddressNotFoundException {
@@ -47,10 +46,6 @@ public class AddressService {
         addressRepository.delete(address);
     }
 
-//    public Page<Address> getFilteredData(Address address) {
-//        return addressRepository.findByCityStartingWithOrRaionStartingWithOrStreetStartingWithOrHouseNumberStartingWith(address.getCity(), address.getRaion(), address.getStreet(), address.getHouseNumber());
-//    }
-//    @Override
     public Page<Address> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
                 Sort.by(sortField).descending();

@@ -20,7 +20,7 @@ import java.util.Map;
 
 
 @RestController
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RequestMapping("/api/v1/address")
 public class AddressController {
     private final AddressService addressService;
@@ -43,27 +43,21 @@ public class AddressController {
         try {
             List<Address> addresses = new ArrayList<Address>();
             Pageable paging = PageRequest.of(page, size);
-//            Pageable paging = Pageable.unpaged();
-            System.out.println("paging = " + paging);
 
             Page<Address> pageAddresses;
             if (title == null) {
                 pageAddresses = addressRepository.findAll(paging);
-                System.out.println("pageAddress = " + pageAddresses);
             } else {
                 pageAddresses = addressRepository.findByCityStartingWithIgnoreCaseOrRaionStartingWithIgnoreCaseOrStreetStartingWithIgnoreCaseOrHouseNumberStartingWithIgnoreCase(title, title, title, title, paging);
-                System.out.println("pageAddress2 = " + pageAddresses);
             }
 
             addresses = pageAddresses.getContent();
-            System.out.println("address = " + addresses);
             Map<String, Object> response = new HashMap<>();
             response.put("addresses", addresses);
             response.put("currentPage", pageAddresses.getNumber());
             response.put("totalItems", pageAddresses.getTotalElements());
             response.put("totalPages", pageAddresses.getTotalPages());
 
-            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

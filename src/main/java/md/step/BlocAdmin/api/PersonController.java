@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/person")
 public class PersonController {
@@ -35,16 +35,17 @@ public class PersonController {
 
 
     @Autowired
-    public PersonController(PersonService personService,RoleRepository roleRepository,PaymentsRepository paymentsRepository,
-                            FlatsRepository flatsRepository,MetersRepository metersRepository) {
+    public PersonController(PersonService personService, RoleRepository roleRepository, PaymentsRepository paymentsRepository,
+                            FlatsRepository flatsRepository, MetersRepository metersRepository) {
         this.personService = personService;
-        this.roleRepository=roleRepository;
-        this.paymentsRepository=paymentsRepository;
-        this.metersRepository=metersRepository;
-        this.flatsRepository=flatsRepository;
+        this.roleRepository = roleRepository;
+        this.paymentsRepository = paymentsRepository;
+        this.metersRepository = metersRepository;
+        this.flatsRepository = flatsRepository;
 
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllPersons(
             @RequestParam(required = false) String title,
@@ -58,10 +59,10 @@ public class PersonController {
             Page<Person> pagePersons;
             if (title == null) {
 //                Optional<Role> personRole = roleRepository.findByName(ERole.ROLE_USER);
-                pagePersons = personRepository.findAllByRoles(personRole,paging);
+                pagePersons = personRepository.findAllByRoles(personRole, paging);
 //                pagePersons = personRepository.findAll(paging);
             } else {
-                pagePersons = personRepository.findAllByRolesAndNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrIdnpStartingWithIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneStartingWithOrMobileStartingWith(personRole,title, title, title, title,title,title, paging);
+                pagePersons = personRepository.findAllByRolesAndNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrIdnpStartingWithIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneStartingWithOrMobileStartingWith(personRole, title, title, title, title, title, title, paging);
 //                pagePersons = personRepository.findByNameStartingWithOrSurnameStartingWithOrIdnpStartingWithOrEmailStartingWithOrPhoneStartingWithOrMobileStartingWith(title, title, title, title,title,title, paging);
             }
 
@@ -73,40 +74,42 @@ public class PersonController {
             response.put("totalItems", pagePersons.getTotalElements());
             response.put("totalPages", pagePersons.getTotalPages());
 
-            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("roles")
     public ResponseEntity<List<Role>> getRoles() {
-            List<Role> role = personService.findAllRoles();
+        List<Role> role = personService.findAllRoles();
         return ResponseEntity.ok(role);
     }
+
     @GetMapping("username/{username}")
     public Boolean checkUsername(@PathVariable("username") String username) {
         return this.personService.checkUsernameExist(username);
     }
+
     @GetMapping("idnp/{idnp}")
     public Boolean checkIdnp(@PathVariable("idnp") String idnp) {
         return this.personService.checkIdnpExist(idnp);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Person> getPersonById(@PathVariable("id") Integer id) throws PersonNotFoundException {
         Person person = personService.findPersonById(id);
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
     public ResponseEntity<Person> addPerson(@RequestBody Person person) {
         Set<Role> strRoles = person.getRoles();
         Set<Role> roles = new HashSet<>();
-        System.out.println("Roles = "+strRoles);
         if (strRoles.isEmpty()) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            System.out.println("personRole = "+personRole);
             roles.add(personRole);
         } else {
             strRoles.forEach(role -> {
@@ -129,12 +132,13 @@ public class PersonController {
                         roles.add(userRole);
                 }
             });
-    }
+        }
         person.setRoles(roles);
         personRepository.save(person);
 
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
+
     @PutMapping()
     public ResponseEntity<Person> updatePerson(@RequestBody Person person) {
         Set<Role> strRoles = person.getRoles();
@@ -142,7 +146,6 @@ public class PersonController {
         if (strRoles == null) {
             Role personRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-//            System.out.println("personRole = "+personRole.getName());
             roles.add(personRole);
         } else {
 
@@ -171,23 +174,24 @@ public class PersonController {
         Person updatePerson = personService.updatePerson(person);
         return new ResponseEntity<>(updatePerson, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable("id") Integer id) throws PersonNotFoundException {
         try {
             //Check person flat, meter,payments, role==ROLE_USER
-            Person person=personRepository.findAllByPersonid(id);
-            List<Flats> flats=flatsRepository.findFlatsByPerson(person);
-            List<Meters> meters=metersRepository.findAllByPerson(person);
-            List<Payments> payments=paymentsRepository.findAllByPerson(person);
+            Person person = personRepository.findAllByPersonid(id);
+            List<Flats> flats = flatsRepository.findFlatsByPerson(person);
+            List<Meters> meters = metersRepository.findAllByPerson(person);
+            List<Payments> payments = paymentsRepository.findAllByPerson(person);
 
-            if (flats.size()>0 || meters.size()>0 || payments.size()>0){
+            if (flats.size() > 0 || meters.size() > 0 || payments.size() > 0) {
                 throw new Exception("Person cannot be deleted");
             }
 
             personService.deletePerson(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

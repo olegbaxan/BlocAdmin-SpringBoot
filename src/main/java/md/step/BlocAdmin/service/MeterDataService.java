@@ -25,14 +25,15 @@ public class MeterDataService {
 
     @Autowired
     public MeterDataService(MeterDataRepository meterDataRepository, MetersRepository metersRepository,
-                            StatusRepository statusRepository,InvoicesRepository invoicesRepository,
+                            StatusRepository statusRepository, InvoicesRepository invoicesRepository,
                             FlatsRepository flatsRepository) {
         this.metersRepository = metersRepository;
         this.meterDataRepository = meterDataRepository;
-        this.statusRepository=statusRepository;
-        this.invoicesRepository=invoicesRepository;
-        this.flatsRepository=flatsRepository;
+        this.statusRepository = statusRepository;
+        this.invoicesRepository = invoicesRepository;
+        this.flatsRepository = flatsRepository;
     }
+
     public MeterData addMeterData(MeterData meterData) {
         return meterDataRepository.save(meterData);
     }
@@ -44,6 +45,7 @@ public class MeterDataService {
     public List<Meters> findAllMeters() {
         return metersRepository.findAll();
     }
+
     public List<Status> findAllStatus() {
         return statusRepository.findAll();
     }
@@ -57,8 +59,9 @@ public class MeterDataService {
     public MeterData getMaxPrevMeterDataByMetersId(Integer id) {
         return meterDataRepository.findAllByMaxCurrentValueAndyMeterId(id);
     }
+
     public Status getStatusByMeterDataId(Integer id) {
-        Optional<MeterData> meterData= meterDataRepository.findById(id);
+        Optional<MeterData> meterData = meterDataRepository.findById(id);
         return meterData.get().getStatus();
     }
 
@@ -70,9 +73,11 @@ public class MeterDataService {
         return meterDataRepository.findById(id)
                 .orElseThrow(() -> new MeterDataNotFoundException(id));
     }
+
     public List<Invoices> findAllInvoicesBySupplier(String supplierName) {
-        return invoicesRepository.findAllBySupplier_SupplierNameAndStatusNameAndTypeOfMeterInvoiceName(supplierName, EStatus.STATUS_NEW,ETypeOfMeterInvoice.TYPE_BUILDING);
+        return invoicesRepository.findAllBySupplier_SupplierNameAndStatusNameAndTypeOfMeterInvoiceName(supplierName, EStatus.STATUS_NEW, ETypeOfMeterInvoice.TYPE_BUILDING);
     }
+
     public List<Flats> findAllFlatsByBuilding(Integer buildingId) {
         return flatsRepository.findFlatsByBuilding_Buildingid(buildingId);
     }
@@ -89,7 +94,6 @@ public class MeterDataService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.meterDataRepository.findAll(pageable);
     }
-
 
 
 }

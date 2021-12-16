@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/password")
 public class PasswordController {
@@ -43,13 +43,11 @@ public class PasswordController {
         String message;
 
         if (!optional.isPresent()) {
-            message= "We didn't find an account for that e-mail address.";
+            message = "We didn't find an account for that e-mail address.";
         } else {
 
             // Generate random 36-character string token for reset password
             Person person = optional.get();
-            System.out.println("Person = "+person.getUsername());
-            System.out.println("Person email = "+person.getEmail());
             person.setResetPasswordToken(UUID.randomUUID().toString());
 
             // Email message
@@ -58,36 +56,20 @@ public class PasswordController {
             passwordResetEmail.setTo(person.getEmail());
             passwordResetEmail.setSubject("Password Reset Request");
             passwordResetEmail.setText("To reset your password, click the link below:\nhttps://blocadmin-angularui.herokuapp.com/password/forgot/reset?token=" + person.getResetPasswordToken());
-            System.out.println("Email text = "+ passwordResetEmail.getText());
             emailService.sendEmail(passwordResetEmail);
 
             // Add success message to view
-            message="A password reset link has been sent to " + personEmail;
+            message = "A password reset link has been sent to " + personEmail;
         }
 
         return ResponseEntity.ok(message);
     }
 
-    // Display form to reset password
-//    @RequestMapping(value = "/reset", method = RequestMethod.GET)
-//    public ModelAndView displayResetPasswordPage(ModelAndView modelAndView, @RequestParam("token") String token) {
-//
-//        Optional<Person> person = personService.findPersonByResetPasswordToken(token);
-//
-//        if (person.isPresent()) { // Token found in DB
-//            modelAndView.addObject("resetToken", token);
-//        } else { // Token not found in DB
-//            modelAndView.addObject("errorMessage", "Oops!  This is an invalid password reset link.");
-//        }
-//
-//        modelAndView.setViewName("resetPassword");
-//        return modelAndView;
-//    }
 
     // Process reset password form
     @PostMapping("/reset")
 //    public ModelAndView setNewPassword(ModelAndView modelAndView, @RequestBody ResetPasswordRequest request, RedirectAttributes redir) {
-        public ResponseEntity<?> setNewPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<?> setNewPassword(@Valid @RequestBody ResetPasswordRequest request) {
         // Find the user associated with the reset token
         Optional<Person> person = personService.findPersonByResetPasswordToken(request.getToken());
         String message = null;
@@ -114,6 +96,7 @@ public class PasswordController {
             return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
     }
+
     // Process change password form
     @PostMapping("/changepassword")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
@@ -126,23 +109,19 @@ public class PasswordController {
 
             Person changePerson = person.get();
             //Check for old password
-            if(!encoder.matches(request.getOldpassword(),person.get().getPassword())){
-                System.out.println("Passwords do not matches");
+            if (!encoder.matches(request.getOldpassword(), person.get().getPassword())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             // Set new password
             changePerson.setPassword(encoder.encode(request.getNewpassword()));
-            System.out.println("ChangePerson"+changePerson);
             // Save user
             personService.save(changePerson);
 
             return ResponseEntity.status(HttpStatus.OK).build();
 
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-//    }catch (Exception e){
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-}}
+
+    }
+}

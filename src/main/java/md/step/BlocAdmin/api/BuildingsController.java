@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/buildings")
 public class BuildingsController {
@@ -35,11 +35,12 @@ public class BuildingsController {
 
 
     @Autowired
-    public BuildingsController(BuidingsService buidingsService,AddressService addressService) {
+    public BuildingsController(BuidingsService buidingsService, AddressService addressService) {
         this.buidingsService = buidingsService;
-        this.addressService=addressService;
+        this.addressService = addressService;
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllBuildings(
             @RequestParam(required = false) String title,
@@ -54,7 +55,7 @@ public class BuildingsController {
             if (title == null) {
                 pageBuildings = buildingsRepository.findAll(paging);
             } else {
-                pageBuildings = buildingsRepository.findAllByAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title,title,title,  paging);
+                pageBuildings = buildingsRepository.findAllByAddress_CityStartingWithIgnoreCaseOrAddress_RaionStartingWithIgnoreCaseOrAddress_StreetStartingWithIgnoreCase(title, title, title, paging);
 
             }
 
@@ -70,36 +71,41 @@ public class BuildingsController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("address")
     public ResponseEntity<List<Address>> getAddress() {
         List<Address> address = buidingsService.findAllAddresses();
         return ResponseEntity.ok(address);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("/{id}")
     public ResponseEntity<Buildings> getBuildingById(@PathVariable("id") Integer id) throws BuildingsNotFoundException {
         Buildings building = buidingsService.findBuildingById(id);
         return new ResponseEntity<>(building, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping()
     public ResponseEntity<Buildings> addBuilding(@RequestBody Buildings building) {
         Address address = new Address();
-        address=addressRepository.findAllByAddressid(building.getAddress().getAddressid());
+        address = addressRepository.findAllByAddressid(building.getAddress().getAddressid());
 
         building.setAddress(address);
         buidingsService.addBuilding(building);
 
         return new ResponseEntity<>(building, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<Buildings> updateBuilding(@RequestBody Buildings building) {
         Buildings updateBuilding = buidingsService.updateBuilding(building);
         return new ResponseEntity<>(updateBuilding, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBuilding(@PathVariable("id") Integer id) throws BuildingsNotFoundException {
         buidingsService.deleteBuilding(id);

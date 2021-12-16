@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/meterdata")
 public class MeterDataController {
@@ -42,7 +42,8 @@ public class MeterDataController {
         this.typeOfMeterInvoiceRepository = typeOfMeterInvoiceRepository;
         this.suppliersRepository = suppliersRepository;
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping()
     public ResponseEntity<Map<String, Object>> getAllMeterData(
             @RequestParam(required = false) String title,
@@ -57,7 +58,7 @@ public class MeterDataController {
             if (title == null) {
                 pageMeterData = meterDataRepository.findAll(paging);
             } else {
-                pageMeterData = meterDataRepository.findDistinctByMeter_SerialContainingIgnoreCaseOrMeter_Supplier_SupplierNameContainingIgnoreCaseOrMeter_Person_NameContainingIgnoreCaseOrMeter_Person_SurnameContainingIgnoreCaseOrMeter_Building_Address_CityStartingWithIgnoreCaseOrMeter_Building_Address_RaionStartingWithIgnoreCaseOrMeter_Building_Address_StreetStartingWithIgnoreCase(title,title,title,title,title,title,title,paging);
+                pageMeterData = meterDataRepository.findDistinctByMeter_SerialContainingIgnoreCaseOrMeter_Supplier_SupplierNameContainingIgnoreCaseOrMeter_Person_NameContainingIgnoreCaseOrMeter_Person_SurnameContainingIgnoreCaseOrMeter_Building_Address_CityStartingWithIgnoreCaseOrMeter_Building_Address_RaionStartingWithIgnoreCaseOrMeter_Building_Address_StreetStartingWithIgnoreCase(title, title, title, title, title, title, title, paging);
             }
 
             meterData = pageMeterData.getContent();
@@ -75,7 +76,7 @@ public class MeterDataController {
 
     @GetMapping("new")
     public ResponseEntity<Map<String, Object>> getMeterDataNew(
-            @RequestParam(required = false,defaultValue = "%") String supp,
+            @RequestParam(required = false, defaultValue = "%") String supp,
             @RequestParam(defaultValue = "0") int build
 //            @RequestParam(defaultValue = "3") int size
     ) {
@@ -85,32 +86,22 @@ public class MeterDataController {
 //            Pageable paging = PageRequest.of(page, size);
 
 //            MeterData pageMeterData;
-            if (Objects.equals(supp, "%") && build==0) {
+            if (Objects.equals(supp, "%") && build == 0) {
                 TypeOfMeterInvoice type = typeOfMeterInvoiceRepository.findAllById(Integer.parseInt("3"));//TYPE_FLATS
                 meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoice(EStatus.STATUS_NEW, type);
 
-            } else if(!Objects.equals(supp, "%") && build==0){
+            } else if (!Objects.equals(supp, "%") && build == 0) {
                 TypeOfMeterInvoice type = typeOfMeterInvoiceRepository.findAllById(Integer.parseInt("3"));
                 meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoiceAndMeter_Supplier_SupplierName(EStatus.STATUS_NEW, type, supp);
-            }
-            else if(Objects.equals(supp, "%") && build>0){
+            } else if (Objects.equals(supp, "%") && build > 0) {
                 TypeOfMeterInvoice type = typeOfMeterInvoiceRepository.findAllById(Integer.parseInt("3"));
-                meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoiceAndMeter_Flat_Building_Buildingid(EStatus.STATUS_NEW,type, build);
-            }
-            else {
-                System.out.println("Supp="+supp);
-                System.out.println("Build="+build);
+                meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoiceAndMeter_Flat_Building_Buildingid(EStatus.STATUS_NEW, type, build);
+            } else {
                 TypeOfMeterInvoice type = typeOfMeterInvoiceRepository.findAllById(Integer.parseInt("3"));
-                meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoiceAndMeter_Supplier_SupplierNameAndMeter_Flat_Building_Buildingid(EStatus.STATUS_NEW, type, supp,build);
+                meterData = meterDataRepository.findMeterDataByStatus_NameAndMeter_TypeOfMeterInvoiceAndMeter_Supplier_SupplierNameAndMeter_Flat_Building_Buildingid(EStatus.STATUS_NEW, type, supp, build);
             }
-            System.out.println("meterData=" + meterData);
-//            meterData = pageMeterData.g
             Map<String, Object> response = new HashMap<>();
             response.put("meterData", meterData);
-//            response.put("currentPage", pageMeterData.getNumber());
-//            response.put("totalItems", pageMeterData.getTotalElements());
-//            response.put("totalPages", pageMeterData.getTotalPages());
-            System.out.println(response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,18 +119,17 @@ public class MeterDataController {
         MeterData meterData = meterDataService.getMaxPrevMeterDataByMetersId(meterId);
         return ResponseEntity.ok(meterData);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @GetMapping("invoices/{name}")
     public ResponseEntity<List<Invoices>> getInvoicesBySupplier(@PathVariable("name") String supplierName) {
         List<Invoices> invoices = meterDataService.findAllInvoicesBySupplier(supplierName);
-        System.out.println("Invoices" + invoices);
         return ResponseEntity.ok(invoices);
     }
 
     @GetMapping("flats/{id}")
     public ResponseEntity<List<Flats>> getFlatsByBuilding(@PathVariable("id") Integer buildingId) {
         List<Flats> flats = meterDataService.findAllFlatsByBuilding(buildingId);
-        System.out.println("flats" + flats.get(0).getFlatNumber());
         return ResponseEntity.ok(flats);
     }
 
@@ -176,10 +166,10 @@ public class MeterDataController {
 
         return new ResponseEntity<>(meterData, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PostMapping("addbulk")
     public ResponseEntity<List<MeterData>> addBulkMeterData(@RequestBody List<MeterData> meterData) {
-        System.out.println("MeterDataLength = "+meterData.size());
         for (int i = 0; i < meterData.size(); i++) {
             Meters meter = new Meters();
             meter = metersRepository.findAllByMeterid(meterData.get(i).getMeter().getMeterId());
@@ -194,36 +184,31 @@ public class MeterDataController {
             }
 
             meterData.get(i).setMeterValue(meterData.get(i).getCurrentValue() - meterData.get(i).getPreviousValue());
-            System.out.println("MeterDataMeter = "+meterData.get(i).getMeter().getSerial());
             meterDataService.addMeterData(meterData.get(i));
         }
         return new ResponseEntity<>(meterData, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @PutMapping()
     public ResponseEntity<MeterData> updateMeterData(@RequestBody MeterData meterData) {
         Meters meter = new Meters();
         meter = metersRepository.findAllByMeterid(meterData.getMeter().getMeterId());
         meterData.setMeter(meter);
         meterData.setMeterValue(meterData.getCurrentValue() - meterData.getPreviousValue());
-        System.out.println("MeterDataUpdate = "+meterData);
         MeterData updateMeterData = meterDataService.updateMeterData(meterData);
         return new ResponseEntity<>(updateMeterData, HttpStatus.OK);
     }
 
     @PutMapping("/edit")
     public ResponseEntity<MeterData> updateCurrentValue(@RequestBody Integer id, String current) throws MeterDataNotFoundException {
-        System.out.println("ID=In the update current value");
-        System.out.println("ID=" + id);
         MeterData meterData = meterDataService.findMeterDataById(id);
-        System.out.println("meterData=" + meterData.getCurrentValue());
         meterData.setCurrentValue(Double.parseDouble(current));
-
-        System.out.println("meterData2=" + meterData.getCurrentValue());
         MeterData updateMeterData = meterDataService.updateMeterData(meterData);
         return new ResponseEntity<>(updateMeterData, HttpStatus.OK);
     }
-    @PreAuthorize(("hasRole('ROLE_ADMIN')")+(" || hasRole('ROLE_BLOCADMIN')"))
+
+    @PreAuthorize(("hasRole('ROLE_ADMIN')") + (" || hasRole('ROLE_BLOCADMIN')"))
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMeterData(@PathVariable("id") Integer id) throws MeterDataNotFoundException {
         meterDataService.deleteMeterData(id);
