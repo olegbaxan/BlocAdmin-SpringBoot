@@ -141,9 +141,7 @@ public class MeterDataController {
 
     @GetMapping("/getprevious/{id}")
     public ResponseEntity<Double> findMaxCurrentValueByMeterId(@PathVariable("id") Integer id) throws MeterDataNotFoundException {
-        System.out.println("MeterID = "+id);
         Double maxValue = meterDataRepository.findMaxCurrentValueByMeterId(id);
-        System.out.println("MeterData = "+maxValue);
         return new ResponseEntity<>(maxValue, HttpStatus.OK);
     }
 
