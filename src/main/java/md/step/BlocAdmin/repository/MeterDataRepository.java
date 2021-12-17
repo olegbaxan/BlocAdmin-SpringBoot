@@ -14,7 +14,9 @@ import java.util.List;
 public interface MeterDataRepository extends JpaRepository<MeterData, Integer> {
     MeterData findAllByMeterdataid(Integer id);
 
-    @Query(value = "select max(m.current_value) FROM application.meterdata m inner join application.meterdata_meter mm on m.meterdataid=mm.meterdata_id inner join application.meterdata_status ms on ms.meterdata_id=m.meterdataid where mm.meter_id=?1",nativeQuery = true)
+    @Query(value = "select max(m.current_value) FROM application.meterdata m \" +\n" +
+            "            \"inner join application.meterdata_meter mm on m.meterdataid=mm.meterdata_id \" +\n" +
+            "            \"inner join application.meters m2 on m.meterdataid =m2.meterid where m2.meterid=?1",nativeQuery = true)
     Double findMaxCurrentValueByMeterId(Integer meter_id);
 
     @Query(value = "select * FROM application.meterdata m \n" +

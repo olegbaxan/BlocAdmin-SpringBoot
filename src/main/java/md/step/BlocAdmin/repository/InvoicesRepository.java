@@ -21,9 +21,11 @@ public interface InvoicesRepository extends JpaRepository<Invoices, Integer> {
     List<Invoices> findInvoicesByInvoiceNumberStartingWith(String invoiceNumber);
 
     List<Invoices> findInvoicesByTypeOfMeterInvoiceName(ETypeOfMeterInvoice type);
-    // String supplier,
 
-//    List<Invoices> findInvoicesByMeter_Building_ AndTypeOfMeterInvoiceOrderByEmittedDateDesc(Person person, TypeOfMeterInvoice type);
+    @Query(value = "select max(meter_data_current) from application.invoices i  \n" +
+            "            inner join application.invoice_meter im on im.invoice_id =i.invoice_id \n" +
+            "            where im.meter_id =?1",nativeQuery = true)
+    Double findMaxCurrentValueByMeterId(Integer meter_id);
 
 //    @Query(value = "select i.invoice_id ,i.date_of_pay ,i.emitted_date ,i.invoice_file_id ,i.invoice_number ,i.invoice_sum ,i.meter_data_current ,i.meter_data_previous ,i.pay_till ,i.unit_price from application.Invoices i "+
     @Query(value = "select i.* from application.Invoices i "+

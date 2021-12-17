@@ -1,6 +1,7 @@
 package md.step.BlocAdmin.api;
 
 import md.step.BlocAdmin.exception.InvoicesNotFoundException;
+import md.step.BlocAdmin.exception.MetersNotFoundException;
 import md.step.BlocAdmin.message.ResponseFile;
 import md.step.BlocAdmin.model.*;
 import md.step.BlocAdmin.repository.*;
@@ -22,7 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(maxAge = 3600, allowCredentials = "true",origins = "https://blocadmin-angularui.herokuapp.com/")
+@CrossOrigin(maxAge = 3600, allowCredentials = "true", origins = "https://blocadmin-angularui.herokuapp.com/")
 @RestController
 @RequestMapping("/api/v1/invoices")
 public class InvoicesController {
@@ -201,6 +202,13 @@ public class InvoicesController {
         List<Invoices> invoice = invoicesRepository.findInvoicesByTypeOfMeterInvoiceAndStatusOrStatus(typeOfMeterInvoice, statusNew, statusNew);
 
         return new ResponseEntity<>(invoice, HttpStatus.OK);
+    }
+
+    @GetMapping("/maxprev/{id}")
+    public ResponseEntity<Double> findMaxCurrentValueByMeterId(@PathVariable("id") Integer id) throws MetersNotFoundException {
+        Double maxValue = invoicesRepository.findMaxCurrentValueByMeterId(id);
+        System.out.println("Max_Prev = " + maxValue);
+        return new ResponseEntity<>(maxValue, HttpStatus.OK);
     }
 
     @GetMapping("supplierinvoices/{id}")
